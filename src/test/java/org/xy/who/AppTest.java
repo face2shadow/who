@@ -77,7 +77,7 @@ public class AppTest
 		ThinkingResult result = new ThinkingResult();
 		try {
 			//调用推荐问题的方法，其中参数SCE001是指知识文件的文件名，如SCE001.txt
-			layer.getRecommendQuestions("SCE001", dsm, result);
+			layer.getRecommendQuestions("SCE001", dsm, result,3);
 			for (ThinkingResultItem item: result) {
 				System.out.println(item); //其中item.getValue()是文字提示 item.getCode()是问题的代码
 			}
@@ -96,18 +96,37 @@ public class AppTest
 		MemoryWrapper dsm = new MemoryWrapper();
 		//把用户提问的问题代码放入内存对象，这里假设用户提的问题代码为Q2
 		//后续会支持对自然文本解析和匹配，这里先用代码
-		dsm.putData("USER_SAY_CODE",  "", "Q2", "+");
+		String[] user_says = {"患者的主诉是什么？","患者 年龄", "患者 性别","具体在哪个部位?","患者主诉是什么？","具体在哪个部位?","症状样式"};
+		String sceneCode = "SCE001";
 
 		//初始化返回结果对象
 		ThinkingResult result = new ThinkingResult();
 		try {
-			//调用推荐问题的方法，其中参数SCE001是指知识文件的文件名，如SCE001.txt
-			layer.getResponse("SCE001", dsm, result);
-			for (ThinkingResultItem item: result) {
-				System.out.println(item);//其中item.getValue()是文字提示 
-				//文字提示是用^符号分割的三段，其中第一段是语法标记，一般为SAY，表示说话
-				//第二段为代码段，可以代表此次说话内容对应的知识点，可以用于计分
-				//第三段为说话的事迹内容
+			for (String s: user_says) {
+				layer.getRecommendQuestions(sceneCode, dsm, result,3);
+				
+				for (ThinkingResultItem item: result) {
+					//String[] parts = item.getValue().split("\\^");
+					System.out.println("系统推荐的问题: "+item.getValue());
+				}
+				System.out.println("----------------------------");
+				dsm.putData("USER_SAY",  "", s, "+");
+				System.out.println("您说: "+dsm.getData("USER_SAY"));
+				//调用推荐问题的方法，其中参数SCE001是指知识文件的文件名，如SCE001.txt
+				layer.getResponse(sceneCode, dsm, result);
+				
+				for (ThinkingResultItem item: result) {
+					
+					String[] parts = item.getValue().split("\\^");
+					dsm.putData(parts[1],  "", "", "+"); //这句是记住系统发过来的答案标记，比较重要
+					System.out.println("系统回复: "+parts[2]);//其中item.getValue()是文字提示 
+
+					System.out.println("----------------------------");
+					//文字提示是用^符号分割的三段，其中第一段是语法标记，一般为SAY，表示说话
+					//第二段为代码段，可以代表此次说话内容对应的知识点，可以用于计分
+					//第三段为说话的事迹内容
+					//ystem.out.println(dsm.getData("USER_CONTEXT").toString());
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

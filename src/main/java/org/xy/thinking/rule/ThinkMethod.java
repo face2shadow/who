@@ -3,11 +3,17 @@ package org.xy.thinking.rule;
 import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import org.xy.model.ResultEnum;
 import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.mem.MemoryWrapper.DSMData;
+import org.xy.utils.SplitWord;
 
 
 public class ThinkMethod {
@@ -166,6 +172,52 @@ public class ThinkMethod {
 	public String monthRangeEstimate(MemoryWrapper mem,String parameters) throws Exception{
 		return null;	
 	}
+
+    public boolean same (String[] arr1, String[] arr2){
+    	if (arr1.length != arr2.length) return false;
+        List<String> l = new LinkedList<String>();
+                         
+        for(String str:arr1){
+            if(!l.contains(str)){
+                l.add(str);
+            }
+        }
+        boolean s = true;
+        for(String str:arr2){
+            if(!l.contains(str)){
+                s = false;
+                break;
+            }
+        }
+        return s;
+    }
+    public String[] union (String[] arr1, String[] arr2){
+        Set<String> hs = new HashSet<String>();
+        for(String str:arr1){
+            hs.add(str);
+        }
+        for(String str:arr2){
+            hs.add(str);
+        }
+        String[] result={};
+        return hs.toArray(result);
+    }
+	public String[] intersect(String[] arr1, String[] arr2){
+        List<String> l = new LinkedList<String>();
+        Set<String> common = new HashSet<String>();                  
+        for(String str:arr1){
+            if(!l.contains(str)){
+                l.add(str);
+            }
+        }
+        for(String str:arr2){
+            if(l.contains(str)){
+                common.add(str);
+            }
+        }
+        String[] result={};
+        return common.toArray(result);
+    }
 	//判断用户说的话是否符合某种模式，需要将用户说的话放在dsm里面
 	@ThinkFunc(domain="evaluate", name="user_say")
 	public ResultEnum userSayPatternEvaluate(MemoryWrapper mem,String parameters) throws Exception{
@@ -179,25 +231,44 @@ public class ThinkMethod {
 		} else {
 			patternValue = pattern;
 		}
-		DSMData data1 = mem.getData("USER_SAY_CODE");
-		DSMData data2 = mem.getData("USER_SAY_CONTENT");
-
+		DSMData data1 = mem.getData("USER_SAY");
 
 		if (data1 != null) {
-			if (data1.getValue().compareTo(pattern) == 0) {
-				return ResultEnum.Positive;
-			} 
-		}
-		if (data2 != null) {
-			if (data2.getName().compareTo(patternValue) == 0) {
-				return ResultEnum.Positive;
-			} 
-		}	
-		if (data1!=null || data2!=null) {
-			return ResultEnum.SystemDontKnow;
+			DSMData data2 = mem.getData("USER_SAY_TMP");
+			if (data2 == null) {
+				List<String> words = SplitWord.ikCutWord(data1.getValue());
+				mem.putTempData("USER_SAY_TMP", "WORDS", SplitWord.list2string(words.toArray(), 5), "+");
+				data2 = mem.getData("USER_SAY_TMP");
+			}
+			
+			if (data2 != null) {
+				String user_input = data2.getValue();
+				DSMData data3 = mem.getData("USER_CONTEXT");
+				String[] contextWords =  {};
+				if (data3 != null) {
+					contextWords = data3.getValue().split(" ") ;
+				}
+				String[] patternWords = pattern.split(" ");
+				String[] userWords = user_input.split(" ");
+				String[] intersectWords = intersect(patternWords, userWords);
+				if (intersectWords.length == patternWords.length) {
+					mem.putData("USER_CONTEXT", "WORDS", SplitWord.list2string(intersectWords, 10), "+");
+					return ResultEnum.Positive;
+				} else {
+					userWords = union(contextWords, userWords);
+					intersectWords = intersect(patternWords, userWords);
+					if (same(intersectWords, contextWords)) {
+						return ResultEnum.Negative;
+					}
+					if (intersectWords.length == patternWords.length) {
+						mem.putData("USER_CONTEXT", "WORDS", SplitWord.list2string(intersectWords, 10), "+");
+						return ResultEnum.Positive;
+					}
+				}
+			}
 		}
 		
-		return ResultEnum.SystemDontKnow;
+		return ResultEnum.Negative;
 	}
 	@ThinkFunc(domain="estimate", name="user_say")
 	public String userSayPatternEstimate(MemoryWrapper mem,String parameters) throws Exception{
@@ -235,8 +306,9 @@ public class ThinkMethod {
 		//TODO fetch user input from DSM
 		return ResultEnum.SystemDontKnow;
 	}
-	@ThinkFunc(domain="estimate", name="ask")
+	@ThinkFunc(domain="evaluate", name="ask")
 	public String askPatternEstimate(MemoryWrapper mem,String parameters) throws Exception{
-		return null;	
+		return null;
 	}
+	
 }

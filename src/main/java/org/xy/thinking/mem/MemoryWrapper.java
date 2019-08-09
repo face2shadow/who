@@ -23,6 +23,7 @@ public class MemoryWrapper {
 	private HashMap<String, DSMData> tmp = new HashMap<String, DSMData>();
 	private HashMap<String, DSMData> data = new HashMap<String, DSMData>();	
 	private Map<String, String> differentials;
+
 	public boolean hasKeyStartsWith(String start) {
 		for (String key: data.keySet()) {
 			if (key.startsWith(start)) return true;
@@ -42,6 +43,9 @@ public class MemoryWrapper {
 	public class DSMData {
 		private String key, name, value;
 		private String flag;
+		public String toString() {
+			return getValue();
+		}
 		public String getKey() {
 			return key;
 		}

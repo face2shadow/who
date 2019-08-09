@@ -145,10 +145,11 @@ public class ThinkingBrain extends ThinkingLayerBase {
         return FAILED;
     }
     private int performActions(String code, KBSection section, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {
+    	
     	HashMap<String,Action> actions = getActions(section);
         List<Action> goCommands = getAllGoCommands(section, dsmInput, true);
 
-    	
+
         for (Action line: goCommands) {
         	String actionCode = line.getName(); 
         	Action act = actions.get(actionCode);
@@ -181,17 +182,17 @@ public class ThinkingBrain extends ThinkingLayerBase {
     		}
     		if (newContent.length()>1) {
     			newContent = newContent.substring(0, newContent.length()-1);
-    			result.addItem(ThinkingResult.ACT, code, "", newContent);
+    			result.addItem(ThinkingResult.ACT, code, act.getName(), newContent);
         		//newAct.setContent(newContent);
         		//result.getActions().add(newAct);
-    		}
+    		} 
     	}
 		return SUCCESS;
     }
     /*
      * get recommended questions list
      */
-    public int getRecommendQuestions(String code, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {
+    public int getRecommendQuestions(String code, MemoryWrapper dsmInput, ThinkingResult result, int maxQuestionCount) throws Exception {
     	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE,code) ) {
     		log.debug("Knowledge was not found");
     		return DKD_NOT_FOUND;
@@ -207,15 +208,16 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	}
     	result.clear();
     	List<Action> goCommands = getAllGoCommands(file, dsmInput, false);
-         
+        
         for (Action act: goCommands) {
         	String factCode = act.getCode();
         	if (dsmInput.getData(factCode)!=null) {
         		continue;
         	} else {
         		result.add(act);
+        		maxQuestionCount --;
         	}
-         	
+         	if (maxQuestionCount == 0) break;
         }
     	return SUCCESS;
     }
@@ -242,9 +244,18 @@ public class ThinkingBrain extends ThinkingLayerBase {
         //		result.add(act);
         //	}
         //}
-        performActions(code, file, dsmInput, result);
-
+    	dsmInput.clearTemp();
+        performActions(code, file, dsmInput, result);        
         result.keepLastOne();
+
+        if (result.size()==0) {
+    		result.addItem(ThinkingResult.ACT, code, "##NA", "SAY^P000^我不知道该怎么回答");
+    		dsmInput.putData("USER_CONTEXT", "WORDS", "", "+");
+    	} else {
+    		dsmInput.putData(result.get(0).getName(), "", "", "+");
+    		//System.out.println("REMEMBER:"+result.get(0).getName());
+    	}
+        
     	return SUCCESS;
     }
     
