@@ -17,11 +17,11 @@ import org.apache.lucene.analysis.TokenStream;
 import org.wltea.analyzer.core.IKSegmenter;
 import org.wltea.analyzer.core.Lexeme;
 import org.wltea.analyzer.lucene.IKAnalyzer;
-
-import com.huaban.analysis.jieba.JiebaSegmenter;
-import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
-import com.huaban.analysis.jieba.SegToken;
-import com.huaban.analysis.jieba.WordDictionary;
+//
+//import com.huaban.analysis.jieba.JiebaSegmenter;
+//import com.huaban.analysis.jieba.JiebaSegmenter.SegMode;
+//import com.huaban.analysis.jieba.SegToken;
+//import com.huaban.analysis.jieba.WordDictionary;
 
 public class SplitWord {
 	private static final Analyzer analyzer = new IKAnalyzer();
@@ -57,17 +57,17 @@ public class SplitWord {
 //
 //		WordDictionary.getInstance().loadUserDict(path);
 //	}
-	public static List<String> split(String sentence){
-		List<String> ret = new ArrayList<String>();
-		JiebaSegmenter segmenter = new JiebaSegmenter();
-		List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
-		for (SegToken tk : tokens) {
-			
-			ret.add(tk.word );
-		}
-		System.out.println("");
-		return ret;
-	}
+//	public static List<String> split(String sentence){
+//		List<String> ret = new ArrayList<String>();
+//		JiebaSegmenter segmenter = new JiebaSegmenter();
+//		List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
+//		for (SegToken tk : tokens) {
+//			
+//			ret.add(tk.word );
+//		}
+//		System.out.println("");
+//		return ret;
+//	}
 	public static String list2string(Object[] list, int lastCount) {
 		if (list == null) return "";
 		String s = "";

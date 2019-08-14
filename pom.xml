@@ -12,14 +12,25 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+	    <maven.compiler.source>1.8</maven.compiler.source>
+   		<maven.compiler.target>1.8</maven.compiler.target>
+        <!-- spring版本号 -->
+        <spring.version>5.1.9.RELEASE</spring.version>
+        <!-- log4j日志文件管理包版本 -->
+        <slf4j.version>1.7.25</slf4j.version>
+        <log4j.version>1.7.25</log4j.version>
+        <!-- mybatis版本号 -->  
+        <mybatis.version>3.5.2</mybatis.version>  
+        <java-version>1.8</java-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>3.8.1</version>
+			<version>4.10</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -38,12 +49,12 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.25</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.huaban/jieba-analysis -->
+		<!-- https://mvnrepository.com/artifact/com.huaban/jieba-analysis 
 		<dependency>
 		    <groupId>com.huaban</groupId>
 		    <artifactId>jieba-analysis</artifactId>
 		    <version>1.0.2</version>
-		</dependency>
+		</dependency>-->
 		<!-- ikanalyzer 中文分词器  -->
 		<dependency>
 		    <groupId>com.janeluo</groupId>
@@ -65,15 +76,86 @@
 		    </exclusions>
 		</dependency>
 		
-		<!--  lucene-queryparser 查询分析器模块 -->
 		<dependency>
 		    <groupId>org.apache.lucene</groupId>
 		    <artifactId>lucene-queryparser</artifactId>
 		    <version>7.3.0</version>
 		</dependency>
-		
+		<dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-core</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-webmvc</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-context</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-context-support</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-aop</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-aspects</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-tx</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+        <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-jdbc</artifactId>  
+            <version>${spring.version}</version>  
+        </dependency>  
+                <dependency>  
+            <groupId>org.springframework</groupId>  
+            <artifactId>spring-test</artifactId>  
+            <version>${spring.version}</version>  
+            <scope>test</scope>  
+        </dependency>  
+         <dependency>  
+            <groupId>org.mybatis</groupId>  
+            <artifactId>mybatis</artifactId>  
+            <version>${mybatis.version}</version>  
+        </dependency>  
+  
+        <!-- mybatis/spring包 -->  
+        <dependency>  
+            <groupId>org.mybatis</groupId>  
+            <artifactId>mybatis-spring</artifactId>  
+            <version>2.0.2</version>  
+        </dependency>  
+  
+        <!-- mysql驱动包 -->  
+        <dependency>  
+            <groupId>mysql</groupId>  
+            <artifactId>mysql-connector-java</artifactId>  
+            <version>8.0.15</version>
+        </dependency>
 	</dependencies>
 	<build>
+	<resources>
+	         <resource>
+             <directory>src/main/resources</directory>
+             <includes>
+                 <include>**/*.*</include>
+             </includes>
+        </resource>
+        </resources>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -96,7 +178,6 @@
 					</archive>
 					<!-- 过滤掉不希望包含在jar中的文件 -->
 					<excludes>
-						<exclude>*.xml</exclude>
 						<exclude>spring/**</exclude>
 						<exclude>config/**</exclude>
 					</excludes>

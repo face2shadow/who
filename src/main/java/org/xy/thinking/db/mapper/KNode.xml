@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="org.xy.thinking.db.dao.KNodeDao">
+<!--设置domain类和数据库中表的字段一一对应，注意数据库字段和domain类中的字段名称不致，此处一定要！-->  
+    <resultMap id="BaseResultMap" type="org.xy.thinking.db.model.KNode">  
+        <id column="ID" property="id" jdbcType="INTEGER" />  
+        <result column="K_TYPE" property="type" jdbcType="CHAR" />  
+        <result column="K_CODE" property="code" jdbcType="CHAR" />  
+        <result column="K_VALUE" property="value" jdbcType="CHAR" />  
+        <result column="K_PROP" property="prop" jdbcType="CHAR" />  
+        <result column="CASE_ID" property="caseId" jdbcType="INTEGER" />  
+
+    </resultMap>
+    
+    <!-- 查询单条记录 -->  
+    <select id="selectById" parameterType="int" resultMap="BaseResultMap">  
+        SELECT * FROM k_node WHERE id = #{id} or k_code = #{code} 
+    </select>  
+</mapper>

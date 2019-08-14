@@ -9,6 +9,10 @@ public class KBDefinitionMap{
 	private HashMap<String, KBSection> sectionsMap = new HashMap<String, KBSection> ();
 	private static final long serialVersionUID = 1L;
 
+	public KBSection getByKey(String key) {
+		if (sectionsMap.containsKey(key)) return sectionsMap.get(key);
+		return null;
+	}
 	public KBSection get(String type, String code) {
 		if (code == null) return sectionsMap.get(type);
 		return sectionsMap.get(type+"|"+code);
