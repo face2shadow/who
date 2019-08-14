@@ -10,13 +10,18 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xy.model.ResultEnum;
+import org.xy.thinking.ThinkingBrain;
 import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.mem.MemoryWrapper.DSMData;
 import org.xy.utils.SplitWord;
 
 
 public class ThinkMethod {
+
+	private static final Logger log = LoggerFactory.getLogger(ThinkMethod.class);
 	public String estimate(String name, MemoryWrapper mem,String parameters) throws Exception {
 		for (Method m : this.getClass().getMethods()) {
 			if (m.isAnnotationPresent(ThinkFunc.class)) {
@@ -251,17 +256,30 @@ public class ThinkMethod {
 				String[] patternWords = pattern.split(" ");
 				String[] userWords = user_input.split(" ");
 				String[] intersectWords = intersect(patternWords, userWords);
+				String[] intersectContextWords = intersect(contextWords, userWords);
+				if (intersectWords.length == 0 && intersectContextWords.length == 0) {
+					//mem.putData("USER_CONTEXT", "WORDS", "", "+");
+					return ResultEnum.Negative;
+				}
 				if (intersectWords.length == patternWords.length) {
+					if (same(intersectWords, contextWords)) {
+						//mem.putData("USER_CONTEXT", "WORDS", "", "+");
+						return ResultEnum.Negative;
+					}
 					mem.putData("USER_CONTEXT", "WORDS", SplitWord.list2string(intersectWords, 10), "+");
 					return ResultEnum.Positive;
 				} else {
 					userWords = union(contextWords, userWords);
 					intersectWords = intersect(patternWords, userWords);
 					if (same(intersectWords, contextWords)) {
+						//mem.putData("USER_CONTEXT", "WORDS", "", "+");
 						return ResultEnum.Negative;
 					}
 					if (intersectWords.length == patternWords.length) {
-						mem.putData("USER_CONTEXT", "WORDS", SplitWord.list2string(intersectWords, 10), "+");
+						if (intersectWords.length > contextWords.length) {
+							mem.putData("USER_CONTEXT", "WORDS", SplitWord.list2string(intersectWords, 10), "+");
+						}
+						log.debug("SET CONTEXT: "+mem.getData("USER_CONTEXT").getValue());
 						return ResultEnum.Positive;
 					}
 				}

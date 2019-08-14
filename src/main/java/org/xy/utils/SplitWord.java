@@ -32,8 +32,11 @@ public class SplitWord {
 		 Lexeme lex = null;
 		 try {
 			while((lex=ik.next())!=null){
+				//System.out.print(lex.getLexemeText()+" ");
 				ret.add(lex.getLexemeText());
 			}
+
+			System.out.println(" ");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -59,8 +62,10 @@ public class SplitWord {
 		JiebaSegmenter segmenter = new JiebaSegmenter();
 		List<SegToken> tokens = segmenter.process(sentence, SegMode.INDEX);
 		for (SegToken tk : tokens) {
+			
 			ret.add(tk.word );
 		}
+		System.out.println("");
 		return ret;
 	}
 	public static String list2string(Object[] list, int lastCount) {

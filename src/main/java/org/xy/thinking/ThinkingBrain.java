@@ -171,7 +171,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
     		    			if (comp.get(1) != null ) {
     		        			String dkdCode = comp.get(1).toString();
     		        			if (dkdCode != null) {		        			
-    			        	        return processThinkFile(dkdCode, dsmInput, result);
+    			        	        processThinkFile(dkdCode, dsmInput, result);
     		        			}
     		    			}
     					} else {
