@@ -2,7 +2,9 @@ package org.xy.thinking.def;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import org.slf4j.Logger;
@@ -34,7 +36,7 @@ public abstract class KBLoader {
 	public static String readFile(String path) {
 		StringBuilder result = new StringBuilder();
         try{
-            BufferedReader br = new BufferedReader(new FileReader(path));//构造一个BufferedReader类来读取文件
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path),"UTF-8"));
             String s = null;
             while((s = br.readLine())!=null){//使用readLine方法，一次读一行
                 result.append(System.lineSeparator()+s);

@@ -1,8 +1,6 @@
 package org.xy.who;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 
 import org.xy.model.ThinkingResult;
@@ -15,19 +13,14 @@ import org.xy.thinking.mem.MemoryWrapper;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-/**
- * Unit test for simple App.
- */
-public class AppTest 
-    extends TestCase
+public class AppTest2   extends TestCase
 {
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public AppTest( String testName )
+    public AppTest2( String testName )
     {
         super( testName );
     }
@@ -44,7 +37,10 @@ public class AppTest
      * Rigourous Test :-)
      */
     public ThinkingBrain initTest() {
-		String path = "/Users/alex/Documents/personal documents/ssf/chat";
+		String path = Thread.currentThread().getContextClassLoader().getResource("static").getPath();
+//    	String path = "C:/workspace/javaspace/inquiry/target/classes/static";
+	 path = "/Users/alex/Documents/personal documents/ssf/chat";
+    	System.out.println(path+"     1111");
 		//File file = new File(path);
 		//File files[] = file.listFiles();
 
@@ -66,7 +62,7 @@ public class AppTest
 	/*
 	 * 获取推荐的问题列表
 	 */
-	public void testGetRecommendQuestions() {
+	public ThinkingResult testGetRecommendQuestions() {
 		//初始化环境
 		ThinkingBrain layer = initTest();
 		//初始化内存管理对象
@@ -76,34 +72,34 @@ public class AppTest
 		//初始化返回结果对象
 		ThinkingResult result = new ThinkingResult();
 		try {
+			System.out.println("22222");
 			//调用推荐问题的方法，其中参数SCE001是指知识文件的文件名，如SCE001.txt
 			layer.getRecommendQuestions("SCE001", dsm, result,3);
 			for (ThinkingResultItem item: result) {
 				System.out.println(item); //其中item.getValue()是文字提示 item.getCode()是问题的代码
 			}
+			System.out.println(result+"     33333");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return result;
 	}
 	/*
 	 * 获取问题的答案
 	 */
-	public void testGetResponse() {
+	public ThinkingResult testGetResponse() {
 		//初始化环境
 		ThinkingBrain layer = initTest();
 		//初始化内存管理对象
 		MemoryWrapper dsm = new MemoryWrapper();
 		
 		//已经支持了分词，所以这里模拟了用户说的几句话
-		String[] user_says = {"孕妇可不可以吃西瓜","没有糖尿病","没有3个月","然后呢？"};
-		
-		//String[] user_says = {"患者的主诉是什么？","患者 年龄", "患者 性别","具体在哪个部位?","患者主诉是什么？","具体在哪个部位?","症状样式"};
-		String sceneCode = "SCE005";
+		String[] user_says = {"患者的主诉是什么？","患者 年龄", "患者 性别","具体在哪个部位?","患者主诉是什么？","具体在哪个部位?","症状样式"};
+		String sceneCode = "SCE001";
 
 		//初始化返回结果对象
 		ThinkingResult result = new ThinkingResult();
-		String lastString = ""; //CAUTION: BE AWARE OF USER's POS/NEG/OTHER response
 		try {
 			for (String s: user_says) {
 				//调用推荐问题的方法，其中参数SCE001是指知识文件的文件名，如SCE001.txt、
@@ -115,7 +111,7 @@ public class AppTest
 				}
 				System.out.println("----------------------------");
 				//这里要把用户说的话放在dsm里面，传给系统
-				dsm.putData("USER_SAY",  "", s , "+");
+				dsm.putData("USER_SAY",  "", s, "+");
 				System.out.println("您说: "+dsm.getData("USER_SAY"));
 				//这里是调用了系统，获得回复
 				layer.getResponse(sceneCode, dsm, result);
@@ -127,22 +123,17 @@ public class AppTest
 					//第二段为代码段，可以代表此次说话内容对应的知识点，可以用于计分
 					//第三段为说话的实际内容
 					System.out.println("系统回复: "+parts[2]);
-					if (parts.length>3){
-						lastString = parts[3];
-					} else {
-						
-					}
+
 					System.out.println("----------------------------");
 				}
-				//System.out.println(dsm.getData("USER_CONTEXT").getValue());
-				//System.out.println("----------------------------");
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return result;
 	}
-	public void testReasoning() {
+	public ThinkingResult testReasoning() {
 		ThinkingBrain layer = initTest();
 		ThinkingDiagnosis diagnosis = new ThinkingDiagnosis();
 		ThinkingResult result = new ThinkingResult();
@@ -159,7 +150,8 @@ public class AppTest
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}	
+			}
+			return result;
 		
 	}
 }	
@@ -214,4 +206,3 @@ public class AppTest
 		System.out.println(rule3.eval(dsm));
 		System.out.println(rule4.eval(dsm));*/
 	//}*/
-

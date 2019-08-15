@@ -16,4 +16,7 @@
     <select id="selectById" parameterType="int" resultMap="BaseResultMap">  
         SELECT * FROM k_dict WHERE idk_dict = #{id} 
     </select>  
+    <select id="selectByCode" parameterType="string" resultMap="BaseResultMap">  
+        SELECT * FROM k_dict WHERE d_code = #{code} 
+    </select>  
 </mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"    
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="org.xy.thinking.db.dao.KLinkDao">
+<!--设置domain类和数据库中表的字段一一对应，注意数据库字段和domain类中的字段名称不致，此处一定要！-->  
+    <resultMap id="BaseResultMap" type="org.xy.thinking.db.model.KLink">  
+        <id column="idk_link" property="id" jdbcType="INTEGER" />  
+        <result column="k_node_from" property="from" jdbcType="INTEGER" />  
+        <result column="k_node_to" property="to" jdbcType="INTEGER" />  
+        <result column="k_link_type" property="type" jdbcType="CHAR" />  
+
+    </resultMap>
+    
+    <!-- 查询单条记录 -->  
+    <select id="selectById" parameterType="int" resultMap="BaseResultMap">  
+        SELECT * FROM k_link WHERE idk_link = #{id} 
+    </select>  
+    <select id="selectByFromTo" parameterType="org.xy.thinking.db.model.KLink" resultMap="BaseResultMap">  
+        SELECT * FROM k_link WHERE k_node_from = #{from} and k_node_to=#{to} and k_link_type=#{type}
+    </select>  
+    
+    <insert id="insert" parameterType="org.xy.thinking.db.model.KLink">
+	    <selectKey resultType="Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+    	insert into k_link (k_node_from,k_node_to,k_link_type) 
+    	values (#{from}, #{to},#{type})
+    </insert>
+    <update id="update" parameterType="org.xy.thinking.db.model.KLink">
+        update k_link set k_node_from=#{from},
+        k_node_to=#{to},k_link_type=#{type}
+    	where id = #{idk_link}
+    </update>
+</mapper>

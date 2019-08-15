@@ -16,6 +16,24 @@
     
     <!-- 查询单条记录 -->  
     <select id="selectById" parameterType="int" resultMap="BaseResultMap">  
-        SELECT * FROM k_node WHERE id = #{id} or k_code = #{code} 
+        SELECT * FROM k_node WHERE id = #{id} 
     </select>  
+    <select id="selectByCode" parameterType="org.xy.thinking.db.model.KNode" resultMap="BaseResultMap">  
+        SELECT * FROM k_node WHERE k_code = #{code} and k_type=#{type} limit 1
+    </select>  
+    <select id="selectByDigest" parameterType="org.xy.thinking.db.model.KNode" resultMap="BaseResultMap">  
+        SELECT * FROM k_node WHERE k_hash = #{hash} limit 1
+    </select>  
+    <insert id="insert" parameterType="org.xy.thinking.db.model.KNode">
+	    <selectKey resultType="Integer" order="AFTER" keyProperty="id">
+			SELECT LAST_INSERT_ID() AS id
+		</selectKey>
+    	insert into k_node (k_type,k_code,k_value,k_prop,case_id) 
+    	values (#{type}, #{code},#{value},#{prop},#{caseId})
+    </insert>
+    <update id="update" parameterType="org.xy.thinking.db.model.KNode">
+        update k_node set k_type=#{type},
+        k_code=#{code},k_value=#{value},k_prop=#{prop},case_id= #{caseId}
+    	where id = #{id}
+    </update>
 </mapper>

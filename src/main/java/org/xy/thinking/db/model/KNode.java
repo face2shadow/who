@@ -1,5 +1,7 @@
 package org.xy.thinking.db.model;
 
+import org.xy.utils.SHA256Digest;
+
 public class KNode {
 	private int id;
 	private String type;
@@ -7,6 +9,7 @@ public class KNode {
 	private String value;
 	private String prop;
 	private int caseId;
+	private String hash;
 	public int getId() {
 		return id;
 	}
@@ -42,6 +45,16 @@ public class KNode {
 	}
 	public void setCaseId(int caseId) {
 		this.caseId = caseId;
+	}
+	public String getHash() {
+		if (hash == null) {
+			String content = String.format("%d %s %s %s", getId(),getCode(),getValue(),getProp());
+			hash = SHA256Digest.digest(content);
+		}
+		return hash;
+	}
+	public void setHash(String hash) {
+		this.hash = hash;
 	}
 
 	
