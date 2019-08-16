@@ -8,11 +8,7 @@ import org.xy.thinking.ThinkingLayerBase;
 import org.xy.thinking.db.model.KNode;
 
 public class SceneStrategy  implements TeleGate {
-	
-	
 	public static final String CURRENT_SCENE ="CURRENT_SCENE";
-	
-
 	private List<ThinkingLayerBase> scenes = new LinkedList<ThinkingLayerBase>();
 	private static int MAX_CONTEXT_SIZE = 10;
 	public SceneStrategy() {

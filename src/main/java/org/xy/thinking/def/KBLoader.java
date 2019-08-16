@@ -37,6 +37,7 @@ public abstract class KBLoader {
 		StringBuilder result = new StringBuilder();
         try{
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path),"UTF-8"));
+            //BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
             String s = null;
             while((s = br.readLine())!=null){//使用readLine方法，一次读一行
                 result.append(System.lineSeparator()+s);

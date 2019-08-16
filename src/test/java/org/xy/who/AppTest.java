@@ -96,10 +96,10 @@ public class AppTest
 		MemoryWrapper dsm = new MemoryWrapper();
 		
 		//已经支持了分词，所以这里模拟了用户说的几句话
-		String[] user_says = {"孕妇可不可以吃西瓜","没有糖尿病","没有3个月","然后呢？"};
+		//String[] user_says = {"孕妇可不可以吃西瓜","没有糖尿病","没有3个月","然后呢？"};
 		
-		//String[] user_says = {"患者的主诉是什么？","患者 年龄", "患者 性别","具体在哪个部位?","患者主诉是什么？","具体在哪个部位?","症状样式"};
-		String sceneCode = "SCE005";
+		String[] user_says = {"患者的主诉是什么？","患者 年龄", "患者 性别","具体在哪个部位?","患者主诉是什么？","具体在哪个部位?","症状样式"};
+		String sceneCode = "SCE001";
 
 		//初始化返回结果对象
 		ThinkingResult result = new ThinkingResult();
@@ -111,7 +111,7 @@ public class AppTest
 				layer.getRecommendQuestions(sceneCode, dsm, result,3);
 				
 				for (ThinkingResultItem item: result) {
-					System.out.println("系统推荐的问题: "+item.getValue());
+					System.out.println("系统推荐的问题: "+item.getName());
 				}
 				System.out.println("----------------------------");
 				//这里要把用户说的话放在dsm里面，传给系统
@@ -121,12 +121,12 @@ public class AppTest
 				layer.getResponse(sceneCode, dsm, result);
 				//这里是打印回复的内容，一般只会回复一条结果
 				for (ThinkingResultItem item: result) {
-					String[] parts = item.getValue().split("\\^");//其中item.getValue()是文字提示 
+					String[] parts = item.getValue().split("\\,");//其中item.getValue()是文字提示 
 
 					//文字提示是用^符号分割的三段，其中第一段是语法标记，一般为SAY，表示说话
 					//第二段为代码段，可以代表此次说话内容对应的知识点，可以用于计分
 					//第三段为说话的实际内容
-					System.out.println("系统回复: "+parts[2]);
+					System.out.println("系统回复: "+parts[0]);
 					if (parts.length>3){
 						lastString = parts[3];
 					} else {

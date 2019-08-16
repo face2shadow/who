@@ -33,6 +33,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
 	public static final String DKD_HEADER_ENTER = "ENTER";
 	public static final String DKD_HEADER_GO = "GO";
 	public static final String DKD_HEADER_ACT = "ACT";
+	public static final String DKD_HEADER_LINK = "LNK";
 	public static final String DKD_PROP_RULE = "rule";
 	public static final String DKD_PROP_RULE_DEFAULT = "default";
 	public static final String DKD_CMD_LOAD = "LOAD";
@@ -77,7 +78,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	if (line.get(DKD_FIELD_CODE)!= null) act.setCode(line.get(DKD_FIELD_CODE).toString());
     	if (line.get(DKD_FIELD_NAME)!= null) act.setName(line.get(DKD_FIELD_NAME).toString());
     	if (line.get(DKD_FIELD_VALUE)!= null) act.setValue(line.get(DKD_FIELD_VALUE).toString());
-    	if (line.get(DKD_FIELD_RULE)!= null) act.setRule(line.get(DKD_FIELD_RULE).toString());
+    	//if (line.get(DKD_FIELD_RULE)!= null) act.setRule(line.get(DKD_FIELD_RULE).toString());
     	return act;
     }
     private HashMap<String, Action> getActions(KBSection section){
@@ -93,6 +94,22 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	}
     	return actions;
     }
+    private List<String> getNextQuestion(KBSection section, String qcode){
+    	
+
+    	
+    	for (KBLine line:section.getLines()) {
+	    	if (line.get(0).toString().compareTo(DKD_HEADER_LINK)==0) {
+				Action act = line2Action(ThinkingResult.LINK, line);
+				String from = act.getValueProp("from");
+				if (from != null && from.compareTo(qcode)==0) {
+					return act.getValueProps("to");
+				}
+				
+	    	}
+    	}
+    	return null;
+    }
 
     private List<Action> getAllGoCommands(KBSection section, MemoryWrapper dsmInput, boolean needValidate) throws Exception{
     	List<Action> goCommands = new ArrayList<Action>();
@@ -101,7 +118,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
 	    		Action act = line2Action(Action.GO, line);
 	    		
 	    		if (needValidate == true) {
-	    			String ruleContent = act.getRuleContent();
+	    			String ruleContent = act.getValueProp("rule");
 	        		if (ruleContent == null) continue;
 	        		if (ruleContent.compareToIgnoreCase(DKD_PROP_RULE_DEFAULT)==0) {
 	        			act.setEvaluateResult(ResultEnum.Positive);       
@@ -151,12 +168,13 @@ public class ThinkingBrain extends ThinkingLayerBase {
 
 
         for (Action line: goCommands) {
-        	String actionCode = line.getName(); 
+        	String actionCode = line.getValueProp("act"); 
         	Action act = actions.get(actionCode);
         	if (ResultEnum.isSystemDontKnow(line.getEvaluateResult()) ||
         			ResultEnum.isNegative(line.getEvaluateResult())) {
         		continue;
         	}
+        	if (act == null) continue;
     		KBLineField field = new KBLineField(section.getDefinition().getDelimeters(), act.getValue());
     		String newContent = "";
     		
@@ -207,9 +225,24 @@ public class ThinkingBrain extends ThinkingLayerBase {
     		return FORBIDDEN_ENTER;
     	}
     	result.clear();
+    	DSMData data = dsmInput.getData("LAST_QUESTION");
+    	List<String> next = null;
+    	if (data != null) next = getNextQuestion(file, data.getValue());
     	List<Action> goCommands = getAllGoCommands(file, dsmInput, false);
-        
-        for (Action act: goCommands) {
+    	List<Action> filteredGoCommands = new ArrayList<Action>();
+    	if (next != null) {
+    		for (String toCode: next) {
+    			for (Action act: goCommands) {
+    				if (act.getCode().compareTo(toCode)==0) {
+    					filteredGoCommands.add(act);
+    				}
+    			}
+    		}
+    	} else {
+    		filteredGoCommands = goCommands;
+    	}
+
+        for (Action act: filteredGoCommands) {
         	String factCode = act.getCode();
         	if (dsmInput.getData(factCode)!=null) {
         		continue;
@@ -219,6 +252,17 @@ public class ThinkingBrain extends ThinkingLayerBase {
         	}
          	if (maxQuestionCount == 0) break;
         }
+        for (Action act: goCommands) {
+         	if (maxQuestionCount <= 0) break;
+        	String factCode = act.getCode();
+        	if (dsmInput.getData(factCode)!=null) {
+        		continue;
+        	} else {
+        		result.add(act);
+        		maxQuestionCount --;
+        	}
+        }
+    	
     	return SUCCESS;
     }
     public int getResponse(String code, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {
@@ -249,10 +293,12 @@ public class ThinkingBrain extends ThinkingLayerBase {
         result.keepLastOne();
 
         if (result.size()==0) {
-    		result.addItem(ThinkingResult.ACT, code, "##NA", "SAY^P000^我不知道该怎么回答");
+    		result.addItem(ThinkingResult.ACT, code, "##NA", "say~我不知道该怎么回答");
     		dsmInput.putData("USER_CONTEXT", "WORDS", "", "+");
     	} else {
-    		dsmInput.putData(result.get(0).getName(), "", "", "+");
+    		dsmInput.putData(result.get(0).getValueProp("question"), "", "", "+");
+    		dsmInput.putData("LAST_QUESTION", "CODE", result.get(0).getValueProp("question"), "+");
+    		//dsmInput.putData("LAST",result.get(0).getCode(), "", "", "+");
     		//System.out.println("REMEMBER:"+result.get(0).getName());
     	}
         

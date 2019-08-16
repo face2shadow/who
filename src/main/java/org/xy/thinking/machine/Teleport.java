@@ -13,6 +13,7 @@ public class Teleport {
 		gates.add(new SentenceClassification());
 		gates.add(new PurposeDetection());
 		gates.add(new EmotionDetection());
+		gates.add(new SceneStrategy());
 	}
 	public void send(String msg) {
 		for (TeleGate gate : gates) {

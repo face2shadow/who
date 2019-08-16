@@ -6,7 +6,7 @@ public class Action extends ThinkingResultItem{
 	public static final int ACT = 2;
 	
 	private ResultEnum evaluateResult = ResultEnum.SystemDontKnow;
-	private String rule = "";
+	
 /*	
 	private String id;
 	private String content;
@@ -74,30 +74,11 @@ public class Action extends ThinkingResultItem{
 		this.evaluateResult = evaluateResult;
 	}
 
-	public String getRule() {
-		return rule;
-	}
 
-	public String getRuleContent() {
-		if (rule != null && rule.length() > 0) {
-			KBDelimeters def = new KBDelimeters();
-			if (rule.contains(def.C4)) {
-				String parts[]= rule.split(def.C4);
-				if (parts.length>1) {
-					return parts[1];
-				}
-			}
-		}
-		return null;
-	}
-	public void setRule(String rule) {
-		this.rule = rule;
-	}
-	
 	@Override
 	public String toString() {
-		String s = String.format("category=%d, code=%s, name=%s, value=%s, rule=%s",  
-				getCategory(), getCode(), getName(), getValue(), getRule());
+		String s = String.format("category=%d, code=%s, name=%s, value=%s",  
+				getCategory(), getCode(), getName(), getValue());
 		return s;
 	}
 }

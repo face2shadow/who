@@ -13,6 +13,7 @@ public class ThinkingResult extends ArrayList<ThinkingResultItem> {
 	public static final int ACT = 1;
 	public static final int MEMORY = 2;
 	public static final int ASK = 3;
+	public static final int LINK = 4;
 	private ResultEnum result = ResultEnum.SystemDontKnow;
 	
 	public void addItem(int category, String code, String name, String value) {
