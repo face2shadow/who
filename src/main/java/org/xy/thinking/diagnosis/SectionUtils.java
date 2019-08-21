@@ -78,7 +78,8 @@ public abstract class SectionUtils {
 		}
 	
 	}
-	public static String evaluteRules(MemoryWrapper mem, List<KBLine> lines, int rulePos, String ruleTag, String returnTag) throws Exception {
+	public static List<String> evaluteRules(MemoryWrapper mem, List<KBLine> lines, int rulePos, String ruleTag, String returnTag) throws Exception {
+		List<String> codes = new ArrayList<String>();
 		for (KBLine line : lines) {
 			if (line.count() < rulePos)
 				continue;
@@ -90,10 +91,10 @@ public abstract class SectionUtils {
 			expr.parse(rule);
 			ResultEnum result = evaluteSingleRule(mem, line, rulePos, ruleTag);
 			if (ResultEnum.isPositive(result) ) {
-				return e_code;
+				codes.add(e_code);
 			}
 		}
-		return null;
+		return codes;
 	}
 	public static ResultEnum evaluteSingleRule(MemoryWrapper mem, KBLine line, int rulePos, String ruleTag) throws Exception {
 		

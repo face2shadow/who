@@ -40,6 +40,9 @@ public abstract class KBLoader {
             //BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
             String s = null;
             while((s = br.readLine())!=null){//使用readLine方法，一次读一行
+            	if (s.startsWith("\0xef\0xbb\0xbf")) {
+            		s = s.substring(3);
+            	}
                 result.append(System.lineSeparator()+s);
             }
             br.close();    
@@ -52,6 +55,7 @@ public abstract class KBLoader {
     public static void loadDKDFromString(String contents, Integer mDate) {
     	KBFile def = new KBFile();
         def.parse(contents);
+
         def.setTimeStamp(mDate);
         def.setLastUpdate(System.currentTimeMillis());
 

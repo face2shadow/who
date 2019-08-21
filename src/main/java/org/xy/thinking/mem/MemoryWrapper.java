@@ -177,6 +177,14 @@ public class MemoryWrapper {
 	public void clearTemp() {
 		tmp.clear();
 	}
+	public void deleteData(String key) {
+		if (data.containsKey(key)) {
+			data.remove(key);
+		}
+		if (tmp.containsKey(key)) {
+			tmp.remove(key);
+		}
+	}
 	public void putTempData(String key, String name, String value, String flag) {
 		DSMData data = new DSMData();
 		data.setFlag(flag);

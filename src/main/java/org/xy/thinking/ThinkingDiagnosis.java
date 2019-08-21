@@ -79,8 +79,8 @@ public class ThinkingDiagnosis extends ThinkingLayerBase {
 		dsm.clearTemp();
 		SectionDiagnosis patSurvey = new SectionDiagnosis(section);
 		SectionUtils.refreshFeatureData(dsm,  section);
-		String hitCode = SectionUtils.evaluteRules(dsm,patSurvey.getExcludeRules(), 2, "rule", "code");
-		if (hitCode != null) {
+		List<String> hitCodes = SectionUtils.evaluteRules(dsm,patSurvey.getExcludeRules(), 2, "rule", "code");
+		if (hitCodes.size()>0) {
 			log.debug(String.format("Patient Survey is not necessory, skipped"));
 			return ResultEnum.Negative;
 		}

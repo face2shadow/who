@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xy.model.ResultEnum;
 import org.xy.model.ThinkingResult;
+import org.xy.model.ThinkingResultItem;
 import org.xy.model.Action;
 import org.xy.model.ActionList;
 import org.xy.model.KBBaseClass;
@@ -54,6 +55,10 @@ public class ThinkingBrain extends ThinkingLayerBase {
     private ThinkingBrain() {
     	
     }
+    /**
+     * singleton 
+     * @return
+     */
     public static ThinkingBrain getInstance() {
     	if (_instance == null) _instance = new ThinkingBrain();
     	return _instance;
@@ -72,6 +77,12 @@ public class ThinkingBrain extends ThinkingLayerBase {
     private void setCurrentTopic(String code, MemoryWrapper dsmInput) {
     	dsmInput.putData(DSM_TOPIC_CODE, "", code, "+");
     }
+    /**
+     * parse line content to Action class
+     * @param category
+     * @param line
+     * @return
+     */
     private Action line2Action(int category, KBLine line) {
     	Action act = new Action();
     	act.setCategory(category);
@@ -81,6 +92,11 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	//if (line.get(DKD_FIELD_RULE)!= null) act.setRule(line.get(DKD_FIELD_RULE).toString());
     	return act;
     }
+    /**
+     * from dkd content, extract all ACT lines
+     * @param section
+     * @return
+     */
     private HashMap<String, Action> getActions(KBSection section){
     	HashMap<String, Action> actions = new HashMap<String, Action>();
 
@@ -110,7 +126,14 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	}
     	return null;
     }
-
+    /**
+     * get all GO lines and evaluate
+     * @param section
+     * @param dsmInput
+     * @param needValidate
+     * @return
+     * @throws Exception
+     */
     private List<Action> getAllGoCommands(KBSection section, MemoryWrapper dsmInput, boolean needValidate) throws Exception{
     	List<Action> goCommands = new ArrayList<Action>();
     	for (KBLine line: section.getLines()) {
@@ -135,6 +158,13 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	}
     	return goCommands;
     }
+    /**
+     * check the DKD is allowed
+     * @param section
+     * @param dsmInput
+     * @return
+     * @throws Exception
+     */
     private int doesAllowEnterDKD(KBSection section, MemoryWrapper dsmInput) throws Exception {
     	boolean allowEnter = false;
         int countOfEnterCondition = 0;
@@ -160,6 +190,62 @@ public class ThinkingBrain extends ThinkingLayerBase {
         if (countOfEnterCondition == 0) allowEnter = true;
         if (allowEnter) return SUCCESS;
         return FAILED;
+    }
+    /**
+     * perform all go command
+     * @param code
+     * @param section
+     * @param dsmInput
+     * @param result
+     * @return
+     * @throws Exception
+     */
+   private int performMatch(String code, KBSection section, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {
+    	
+    	HashMap<String,Action> actions = getActions(section);
+        List<Action> goCommands = getAllGoCommands(section, dsmInput, true);
+
+
+        for (Action line: goCommands) {
+        	String actionCode = line.getValueProp("act"); 
+        	Action act = actions.get(actionCode);
+        	if (ResultEnum.isSystemDontKnow(line.getEvaluateResult()) ||
+        			ResultEnum.isNegative(line.getEvaluateResult())) {
+        		result.addItem(ThinkingResult.UNMATCHED, code, act.getCode(), act.getValue());
+        		continue;
+        	}
+        	if (act == null) continue;
+    		KBLineField field = new KBLineField(section.getDefinition().getDelimeters(), act.getValue());
+    		String newContent = "";
+    		
+    		for (KBBaseClass basic:field.getFields()) {
+    			//if (askPresented) break;
+    			if (basic instanceof KBFieldComponent) {
+    				KBFieldComponent comp = (KBFieldComponent) basic;       				
+    				String type = comp.get(0).toString();        				
+    				if (type != null) {
+					
+    					if (type.compareToIgnoreCase(DKD_CMD_LOAD)==0) {
+    		    			if (comp.get(1) != null ) {
+    		        			String dkdCode = comp.get(1).toString();
+    		        			if (dkdCode != null) {		        			
+    			        	        processThinkFile(dkdCode, dsmInput, result);
+    		        			}
+    		    			}
+    					} else {
+    						newContent = newContent + comp.toString() + ",";       
+    					}
+    				}
+    			}
+    		}
+    		if (newContent.length()>1) {
+    			newContent = newContent.substring(0, newContent.length()-1);
+    			result.addItem(ThinkingResult.MATCHED, code, act.getCode(), newContent);
+        		//newAct.setContent(newContent);
+        		//result.getActions().add(newAct);
+    		} 
+    	}
+		return SUCCESS;
     }
     private int performActions(String code, KBSection section, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {
     	
@@ -200,7 +286,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
     		}
     		if (newContent.length()>1) {
     			newContent = newContent.substring(0, newContent.length()-1);
-    			result.addItem(ThinkingResult.ACT, code, act.getName(), newContent);
+    			result.addItem(ThinkingResult.ACT, code, act.getCode(), newContent);
         		//newAct.setContent(newContent);
         		//result.getActions().add(newAct);
     		} 
@@ -304,7 +390,45 @@ public class ThinkingBrain extends ThinkingLayerBase {
         
     	return SUCCESS;
     }
-    
+    public int compareKnowledge(String code, String userContent, ThinkingResult result) throws Exception {
+    	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE, code) ) {
+    		log.debug("Knowledge was not found");
+    		return DKD_NOT_FOUND;
+    	}
+    	KBSection file = KBLoader.getDefinitions().get(DKD_TYPE, code);
+    	if (file == null) {
+    		log.debug("DKD file cache was not found");
+    		return DKD_NOT_FOUND;
+    	}
+    	result.clear();
+    	MemoryWrapper dsmInput = new MemoryWrapper();
+    	String[] sentences = userContent.split("\n");
+    	for (String words: sentences) {
+
+        	ThinkingResult tmpResult = new ThinkingResult();
+    		//dsmInput.deleteData("USER_SAY_TMP");
+    		//dsmInput.deleteData("USER_CONTEXT");
+    		dsmInput.putData("USER_SAY",  "", words , "+");
+    		dsmInput.clearTemp();
+    		performMatch(code, file, dsmInput, tmpResult); 
+    		for (ThinkingResultItem item: tmpResult) {
+    			ThinkingResultItem cached = result.getItem(item.getCode(), item.getName());
+    			if (cached == null) {
+    				result.add(item);
+    			} else {
+    				if (item.getCategory()== ThinkingResult.MATCHED  ) {
+    					cached.setCategory(item.getCategory());
+    				}
+    			}
+    		}
+    	}
+        if (result.size()==0) {
+    		result.addItem(ThinkingResult.ACT, code, "##NA", "say~没有匹配的结果");
+    		dsmInput.putData("USER_CONTEXT", "WORDS", "", "+");
+    	} 
+        
+    	return SUCCESS;  	
+    }
     private int processThinkFile(String code, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {
     	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE, code) ) {
     		log.debug("Knowledge was not found");

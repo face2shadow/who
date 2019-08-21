@@ -142,6 +142,49 @@ public class AppTest
 			e.printStackTrace();
 		}
 	}
+	public void testComparision() {
+		//初始化环境
+		ThinkingBrain layer = initTest();
+		//初始化内存管理对象
+		MemoryWrapper dsm = new MemoryWrapper();
+		
+		//已经支持了分词，所以这里模拟了用户说的几句话
+		//String[] user_says = {"孕妇可不可以吃西瓜","没有糖尿病","没有3个月","然后呢？"};
+		
+		String[] user_says = {"临床诊断 胸腔积液\n气胸\n患者 性别\n具体在哪个部位?\n患者主诉是什么？\n具体在哪个部位?\n症状样式"};
+		String sceneCode = "SCE001-1";
+
+		//初始化返回结果对象
+		ThinkingResult result = new ThinkingResult();
+		String lastString = ""; //CAUTION: BE AWARE OF USER's POS/NEG/OTHER response
+		try {
+			for (String s: user_says) {
+
+				//这里是调用了系统，获得回复
+				layer.compareKnowledge(sceneCode, s, result);
+				//这里是打印回复的内容，一般只会回复一条结果
+				for (ThinkingResultItem item: result) {
+					String[] parts = item.getValue().split("\\,");//其中item.getValue()是文字提示 
+
+					//文字提示是用^符号分割的三段，其中第一段是语法标记，一般为SAY，表示说话
+					//第二段为代码段，可以代表此次说话内容对应的知识点，可以用于计分
+					//第三段为说话的实际内容
+					System.out.println("系统回复: "+parts[0]+item.getCategory());
+					if (parts.length>3){
+						lastString = parts[3];
+					} else {
+						
+					}
+					System.out.println("----------------------------");
+				}
+				//System.out.println(dsm.getData("USER_CONTEXT").getValue());
+				//System.out.println("----------------------------");
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
+	}
 	public void testReasoning() {
 		ThinkingBrain layer = initTest();
 		ThinkingDiagnosis diagnosis = new ThinkingDiagnosis();

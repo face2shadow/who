@@ -14,6 +14,8 @@ public class ThinkingResult extends ArrayList<ThinkingResultItem> {
 	public static final int MEMORY = 2;
 	public static final int ASK = 3;
 	public static final int LINK = 4;
+	public static final int MATCHED = 5;
+	public static final int UNMATCHED = 6;
 	private ResultEnum result = ResultEnum.SystemDontKnow;
 	
 	public void addItem(int category, String code, String name, String value) {
@@ -42,6 +44,14 @@ public class ThinkingResult extends ArrayList<ThinkingResultItem> {
 	public ThinkingResultItem getItem(int category, String code) {
 		for (ThinkingResultItem item: this) {
 			if (item.getCategory() == category && item.getCode().compareToIgnoreCase(code)==0) {
+				return item;
+			}
+		}
+		return null;
+	}
+	public ThinkingResultItem getItem(String code, String name) {
+		for (ThinkingResultItem item: this) {
+			if (item.getName().compareToIgnoreCase(name) == 0 && item.getCode().compareToIgnoreCase(code)==0) {
 				return item;
 			}
 		}

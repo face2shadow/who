@@ -1,6 +1,8 @@
 package org.xy.thinking;
 
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xy.model.KBLine;
@@ -56,8 +58,8 @@ public class ThinkingPatientSurvey  extends ThinkingLayerBase {
 		dsm.clearTemp();
 		SectionPatientSurvey patSurvey = new SectionPatientSurvey(section);
 		SectionUtils.refreshFeatureData(dsm,  section);
-		String hitCode = SectionUtils.evaluteRules(dsm,patSurvey.getExcludeRules(), 2, "rule", "code");
-		if (hitCode != null) {
+		List<String> hitCodes = SectionUtils.evaluteRules(dsm,patSurvey.getExcludeRules(), 2, "rule", "code");
+		if (hitCodes.size()>0) {
 			log.debug(String.format("Patient Survey is not necessory, skipped"));
 			return ResultEnum.Negative;
 		}
