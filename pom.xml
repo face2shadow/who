@@ -1,14 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.xy</groupId>
 	<artifactId>who</artifactId>
 	<version>0.0.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>who</name>
+	<name>who</name> 
 	<url>http://maven.apache.org</url>
 
 	<properties>
@@ -16,9 +14,11 @@
    		<maven.compiler.target>1.8</maven.compiler.target>
         <!-- spring版本号 -->
         <spring.version>5.1.5.RELEASE</spring.version>
+      
+        <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <!-- log4j日志文件管理包版本 -->
         <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>1.7.25</log4j.version>
+        <log4j.version>1.7.25</log4j.version> 
         <!-- mybatis版本号 -->  
         <mybatis.version>3.5.2</mybatis.version>  
         <java-version>1.8</java-version>
@@ -165,7 +165,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.2</version>
+				<version>3.1.1</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>

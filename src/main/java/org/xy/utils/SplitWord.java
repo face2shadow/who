@@ -9,8 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -29,11 +31,57 @@ public class SplitWord {
 		StringReader re = new StringReader(s);
 		IKSegmenter ik = new IKSegmenter(re,true);
 		List<String> ret = new ArrayList<String>();
-		 Lexeme lex = null;
+		Lexeme lex = null;
 		 try {
 			while((lex=ik.next())!=null){
 				//System.out.print(lex.getLexemeText()+" ");
 				ret.add(lex.getLexemeText());
+			}
+
+			System.out.println(" ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//TokenStream ts = analyzer.tokenStream("", s);/
+		//CharTermAttri
+		//while (ts.incrementToken()) {//
+		//	System.out.println(ts.)
+		//}
+		return ret;
+	}
+	public static Set<String> ikCutWordSet(String s){
+		StringReader re = new StringReader(s);
+		IKSegmenter ik = new IKSegmenter(re,true);
+		Set<String> ret = new HashSet<String>();
+		Lexeme lex = null;
+		 try {
+			while((lex=ik.next())!=null){
+				//System.out.print(lex.getLexemeText()+" ");
+				ret.add(lex.getLexemeText());
+			}
+
+			System.out.println(" ");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		//TokenStream ts = analyzer.tokenStream("", s);/
+		//CharTermAttri
+		//while (ts.incrementToken()) {//
+		//	System.out.println(ts.)
+		//}
+		return ret;
+	}
+	public static List<Lexeme> ikCutWordLexeme(String s){
+		StringReader re = new StringReader(s);
+		IKSegmenter ik = new IKSegmenter(re,true);
+		List<Lexeme> ret = new ArrayList<Lexeme>();
+		Lexeme lex = null;
+		 try {
+			while((lex=ik.next())!=null){
+				//System.out.print(lex.getLexemeText()+" ");
+				ret.add(lex);
 			}
 
 			System.out.println(" ");
