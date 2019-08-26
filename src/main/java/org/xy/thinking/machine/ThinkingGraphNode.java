@@ -10,6 +10,7 @@ public class ThinkingGraphNode {
 	private String name;
 	private String code;
 	private String content;
+	private String consistOf;
 	private List<ThinkingGraphVector> links = new LinkedList<ThinkingGraphVector>();
 	public String getName() {
 		return name;
@@ -46,6 +47,12 @@ public class ThinkingGraphNode {
 	}
 	public void setCode(String code) {
 		this.code = code;
+	}
+	public String getConsistOf() {
+		return consistOf;
+	}
+	public void setConsistOf(String consistOf) {
+		this.consistOf = consistOf;
 	}
 
 }

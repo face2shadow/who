@@ -30,4 +30,7 @@ public class ThinkingGraphVector {
 	public void setId(int id) {
 		this.id = id;
 	}
+	public String getCode() {
+		return String.format("%s_%s", from.getCode(), to.getCode());
+	}
 }

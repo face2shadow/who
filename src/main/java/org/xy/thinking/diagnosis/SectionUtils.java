@@ -78,7 +78,7 @@ public abstract class SectionUtils {
 		}
 	
 	}
-	public static List<String> evaluteRules(MemoryWrapper mem, List<KBLine> lines, int rulePos, String ruleTag, String returnTag) throws Exception {
+	public static List<String> evaluateRules(MemoryWrapper mem, List<KBLine> lines, int rulePos, String ruleTag, String returnTag) throws Exception {
 		List<String> codes = new ArrayList<String>();
 		for (KBLine line : lines) {
 			if (line.count() < rulePos)

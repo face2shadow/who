@@ -9,9 +9,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.xy.model.KBLine;
 import org.xy.model.KBSection;
+import org.xy.model.ThinkingResult;
 import org.xy.thinking.db.model.KNode;
 import org.xy.thinking.def.KBDefinitionMap;
 import org.xy.thinking.def.KBLoader;
+import org.xy.thinking.machine.ThinkingGraph;
+import org.xy.thinking.machine.ThinkingGraphNode;
+import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.service.ThinkingDatabaseService;
 
 @SpringBootApplication
@@ -67,12 +71,70 @@ public class DBWriter {
 		}
 	
 	}
+	
+	public ThinkingGraph generateGraph() {
+		KBDefinitionMap map = KBLoader.getDefinitions();
+
+		ThinkingGraph g = new ThinkingGraph();
+
+		for (String key: map.keySet()) {
+			KBSection section = map.getByKey(key);
+			KBLine line = section.getDeclarationLine();
+			if (line.get(0).toString().compareTo("DIS")==0) {
+				ThinkingGraphNode node = g.createNode(line.get(2).toString(),line.get(1).toString());
+				System.out.println("insert section "+node.getCode()+" "+node.getName());
+				for (KBLine l : section.getLines()) {
+					if (l != line) {
+						if (l.get(0).toString().compareTo("SYM")==0) {
+
+							ThinkingGraphNode subnode = g.createNode(l.get(2).toString(),l.get(1).toString());
+							
+							System.out.println("insert subnode "+subnode.getCode()+" "+subnode.getName());
+							g.linkNode(subnode, node);
+						}
+						if (l.get(0).toString().compareTo("EXP")==0) {
+							String node_id = l.get(1).toString();
+							String andcodes = l.get(2).toString();
+							String orcodes = l.get(3).toString();
+							ThinkingGraphNode targetNode = g.getNode(node_id);
+							if (orcodes.length()>0) {
+								String[] parts = orcodes.split(",");
+								for (String s: parts) {
+									ThinkingGraphNode anotherNode = g.getNode(s);
+									if (anotherNode == targetNode) {
+										System.out.println("Loop detected");
+									} else {
+										g.linkNode(anotherNode, targetNode);
+									}
+								}
+							}
+						}
+					}
+				}
+			} else {
+				continue;
+			}			
+			
+		}
+		return g;
+	}
 	public static void main(String[] args) {
 		ConfigurableApplicationContext ctx = SpringApplication.run(DBWriter.class,args);
 		DBWriter w = ctx.getBean(DBWriter.class);
 	
 		String path = "/Users/alex/Documents/AI/LTConverted";
 		KBLoader.loadDKDFromFileSystem(path);
-		w.saveToDB();
+		//w.saveToDB();
+		ThinkingGraph g = w.generateGraph();
+		MemoryWrapper dsmInput = new MemoryWrapper();
+		ThinkingResult result = new ThinkingResult();
+		try {
+			dsmInput.putData("1493", "","","+");
+			//dsmInput.putData("4559", "","","+");
+			g.think(dsmInput, result,  "", "","");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }
