@@ -52,7 +52,7 @@ public abstract class KBLoader {
         return result.toString();
 	}
 
-    public static void loadDKDFromString(String contents, Integer mDate) {
+    public static void loadDKDFromString(String contents, long mDate) {
     	KBFile def = new KBFile();
         def.parse(contents);
 

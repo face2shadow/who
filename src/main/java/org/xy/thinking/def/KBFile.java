@@ -12,7 +12,7 @@ public class KBFile {
 	private List<KBSection> sections = new ArrayList<KBSection>();
 
 	private long lastUpdate = 0;
-	private int timeStamp;
+	private long timeStamp;
 	public long getLastUpdate() {
 		return lastUpdate;
 	}
@@ -20,11 +20,11 @@ public class KBFile {
 	public void setLastUpdate(long lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
-	public int getTimeStamp() {
+	public long getTimeStamp() {
 		return timeStamp;
 	}
 
-	public void setTimeStamp(int timeStamp) {
+	public void setTimeStamp(long timeStamp) {
 		this.timeStamp = timeStamp;
 	}
 	public List<KBSection> getSections(){

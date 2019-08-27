@@ -6,6 +6,10 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.stereotype.Service;
 import org.xy.model.ResultEnum;
 import org.xy.model.ThinkingResult;
 import org.xy.model.ThinkingResultItem;
@@ -18,13 +22,15 @@ import org.xy.model.KBLine;
 import org.xy.model.KBLineField;
 import org.xy.model.KBSection;
 import org.xy.model.KBSectionDefinition;
+import org.xy.thinking.db.KnowledgeReader;
 import org.xy.thinking.def.KBDefinitionMap;
 import org.xy.thinking.def.KBFile;
 import org.xy.thinking.def.KBLoader;
 import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.mem.MemoryWrapper.DSMData;
 import org.xy.thinking.rule.ThinkingRule;
-
+import org.xy.thinking.service.CaseDatabaseService;
+@Service
 public class ThinkingBrain extends ThinkingLayerBase {
 	private static final Logger log = LoggerFactory.getLogger(ThinkingBrain.class);
 	public static final String DSM_TOPIC_CODE = "TOPIC_CODE";
@@ -51,7 +57,9 @@ public class ThinkingBrain extends ThinkingLayerBase {
 	public static final int FORBIDDEN_ENTER = -3;
 	
     private static ThinkingBrain _instance = null;
-    
+	@Autowired
+	CaseDatabaseService service;
+	
     private ThinkingBrain() {
     	
     }
@@ -60,7 +68,10 @@ public class ThinkingBrain extends ThinkingLayerBase {
      * @return
      */
     public static ThinkingBrain getInstance() {
-    	if (_instance == null) _instance = new ThinkingBrain();
+    	if (_instance == null) {
+    		ConfigurableApplicationContext ctx = SpringApplication.run(KnowledgeReader.class,new String[] {});
+    		_instance = ctx.getBean(ThinkingBrain.class);
+    	}
     	return _instance;
     }
     public static void debug(String message) {
@@ -293,10 +304,23 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	}
 		return SUCCESS;
     }
+    private void loadKnowledgeFile(String code) {
+    	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE,code) ) {
+    		if (service != null) {
+    			String content = service.readCase(code);
+    			log.info("load knowledge from database for code: " + code);
+    			log.debug(content);
+    			KBLoader.loadDKDFromString(content,  System.currentTimeMillis());
+    		} else {
+    			log.error("datbase service not existed.");
+    		}
+    	}
+    }
     /*
      * get recommended questions list
      */
     public int getRecommendQuestions(String code, MemoryWrapper dsmInput, ThinkingResult result, int maxQuestionCount) throws Exception {
+    	loadKnowledgeFile(code);
     	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE,code) ) {
     		log.debug("Knowledge was not found");
     		return DKD_NOT_FOUND;
@@ -352,6 +376,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	return SUCCESS;
     }
     public int getResponse(String code, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {
+    	loadKnowledgeFile(code);
     	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE, code) ) {
     		log.debug("Knowledge was not found");
     		return DKD_NOT_FOUND;
@@ -391,6 +416,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	return SUCCESS;
     }
     public int compareKnowledge(String code, String userContent, ThinkingResult result) throws Exception {
+    	loadKnowledgeFile(code);
     	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE, code) ) {
     		log.debug("Knowledge was not found");
     		return DKD_NOT_FOUND;

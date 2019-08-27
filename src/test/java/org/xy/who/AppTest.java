@@ -43,14 +43,14 @@ public class AppTest
     /**
      * Rigourous Test :-)
      */
-    public ThinkingBrain initTest() {
-		String path = "/Users/alex/Documents/personal documents/ssf/chat";
+    //public ThinkingBrain initTest() {
+	//	String path = "/Users/alex/Documents/personal documents/ssf/chat";
 		//File file = new File(path);
 		//File files[] = file.listFiles();
 
 		//ThinkingBrain brain = ThinkingBrain.getInstance();
-		KBLoader.loadDKDFromFileSystem(path);
-		ThinkingBrain layer = ThinkingBrain.getInstance();
+	//	KBLoader.loadDKDFromFileSystem(path);
+	//	ThinkingBrain layer = ThinkingBrain.getInstance();
 		//for (File f: files) {
 		//	if (f.isDirectory()==false) 
 		//	{				
@@ -60,15 +60,15 @@ public class AppTest
 		//		System.out.println(filename);
 		//	}
 		//}
-		return layer;
-    }
+	//	return layer;
+   // }
     
 	/*
 	 * 获取推荐的问题列表
 	 */
 	public void testGetRecommendQuestions() {
 		//初始化环境
-		ThinkingBrain layer = initTest();
+		ThinkingBrain layer = ThinkingBrain.getInstance();
 		//初始化内存管理对象
 		MemoryWrapper dsm = new MemoryWrapper();
 		//像内存中放入已经提过的问题
@@ -91,14 +91,15 @@ public class AppTest
 	 */
 	public void testGetResponse() {
 		//初始化环境
-		ThinkingBrain layer = initTest();
+		ThinkingBrain layer = ThinkingBrain.getInstance();
 		//初始化内存管理对象
 		MemoryWrapper dsm = new MemoryWrapper();
 		
 		//已经支持了分词，所以这里模拟了用户说的几句话
 		//String[] user_says = {"孕妇可不可以吃西瓜","没有糖尿病","没有3个月","然后呢？"};
+		String[] user_says = {"患者的信息？","患者症状", "患者尿量","具体在哪个部位?","患者主诉是什么？","具体在哪个部位?","症状样式"};
 		
-		String[] user_says = {"患者的主诉是什么？","患者 年龄", "患者 性别","具体在哪个部位?","患者主诉是什么？","具体在哪个部位?","症状样式"};
+		//String[] user_says = {"患者的主诉是什么？","患者 年龄", "患者 性别","具体在哪个部位?","患者主诉是什么？","具体在哪个部位?","症状样式"};
 		String sceneCode = "SCE001";
 
 		//初始化返回结果对象
@@ -144,7 +145,7 @@ public class AppTest
 	}
 	public void testComparision() {
 		//初始化环境
-		ThinkingBrain layer = initTest();
+		ThinkingBrain layer = ThinkingBrain.getInstance();
 		//初始化内存管理对象
 		MemoryWrapper dsm = new MemoryWrapper();
 		
@@ -186,7 +187,7 @@ public class AppTest
 		}		
 	}
 	public void testReasoning() {
-		ThinkingBrain layer = initTest();
+		ThinkingBrain layer = ThinkingBrain.getInstance();
 		ThinkingDiagnosis diagnosis = new ThinkingDiagnosis();
 		ThinkingResult result = new ThinkingResult();
 		MemoryWrapper dsm = new MemoryWrapper();
