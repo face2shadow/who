@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.xy.thinking.db.dao.AnswerDao;
 import org.xy.thinking.db.dao.CaseDao;
@@ -24,7 +26,7 @@ import org.xy.thinking.db.model.QuestionLink;
 import org.xy.thinking.service.CaseDatabaseService;
 import org.xy.thinking.service.ThinkingDatabaseService;
 
-@Service
+@Component
 public class CaseDatabaseServiceImpl implements CaseDatabaseService {
 
 	@Autowired

@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.xy.model.ResultEnum;
 import org.xy.model.ThinkingResult;
@@ -22,7 +25,6 @@ import org.xy.model.KBLine;
 import org.xy.model.KBLineField;
 import org.xy.model.KBSection;
 import org.xy.model.KBSectionDefinition;
-import org.xy.thinking.db.KnowledgeReader;
 import org.xy.thinking.def.KBDefinitionMap;
 import org.xy.thinking.def.KBFile;
 import org.xy.thinking.def.KBLoader;
@@ -31,6 +33,7 @@ import org.xy.thinking.mem.MemoryWrapper.DSMData;
 import org.xy.thinking.rule.ThinkingRule;
 import org.xy.thinking.service.CaseDatabaseService;
 @Service
+@ComponentScan("org.xy.thinking")
 public class ThinkingBrain extends ThinkingLayerBase {
 	private static final Logger log = LoggerFactory.getLogger(ThinkingBrain.class);
 	public static final String DSM_TOPIC_CODE = "TOPIC_CODE";
@@ -69,7 +72,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
      */
     public static ThinkingBrain getInstance() {
     	if (_instance == null) {
-    		ConfigurableApplicationContext ctx = SpringApplication.run(KnowledgeReader.class,new String[] {});
+    		ConfigurableApplicationContext ctx = SpringApplication.run(ThinkingBrain.class,new String[] {});
     		_instance = ctx.getBean(ThinkingBrain.class);
     	}
     	return _instance;
