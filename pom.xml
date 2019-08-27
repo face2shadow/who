@@ -154,10 +154,10 @@
 	</dependencies>
 	<build>
 		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
+<!--			<resource>
+ 				<directory>src/main/resources</directory>
 				<includes>
-					<include>**/*.*</include>
+					<include>**/*.txt</include>
 				</includes>
 				<excludes>
 					<exclude>**/log4j.properties</exclude>
@@ -166,7 +166,7 @@
 					<exclude>**/question.txt</exclude>
 					<exclude>**/IKAnalyzer.cfg.xml</exclude>
 				</excludes>
-			</resource>
+			</resource> -->
 		</resources>
 		<plugins>
 			<plugin>
@@ -190,8 +190,12 @@
 					</archive>
 					<!-- 过滤掉不希望包含在jar中的文件 -->
 					<excludes>
-						<exclude>spring/**</exclude>
-						<exclude>config/**</exclude>
+						<exclude>dicts/**</exclude>
+						<exclude>mybatis/**</exclude>
+						<exclude>properties/**</exclude>
+						<exclude>application-bean.xml</exclude>
+						<exclude>IKAnalyzer.cfg.xml</exclude>
+						<exclude>log4j-spring.properties</exclude>
 					</excludes>
 					<!-- <includes> <include></include> </includes> -->
 				</configuration>

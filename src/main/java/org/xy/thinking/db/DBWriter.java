@@ -21,8 +21,8 @@ import org.xy.thinking.service.ThinkingDatabaseService;
 @SpringBootApplication
 @ComponentScan("org.xy.thinking")
 public class DBWriter {
-	@Autowired
-	ThinkingDatabaseService service;
+	//@Autowired
+	//ThinkingDatabaseService service;
 	public void saveToDB() {
 		KBDefinitionMap map = KBLoader.getDefinitions();
 		
@@ -39,7 +39,7 @@ public class DBWriter {
 			}
 			
 			
-			service.insertOrUpdate(node);
+			//service.insertOrUpdate(node);
 			System.out.println("insert section "+node.getCode()+" "+node.getValue());
 			for (KBLine l : section.getLines()) {
 				if (l != line) {
@@ -61,9 +61,9 @@ public class DBWriter {
 						node1.setProp(node1.getProp()+"|"+l.get(4).toString());
 					}
 					System.out.println("insert subnode "+node1.getCode()+" "+node1.getValue());
-					service.insertOrUpdate(node1);
+					//service.insertOrUpdate(node1);
 					if (node1.getId()>0) {
-						service.link(node1,  node);
+						//service.link(node1,  node);
 						System.out.println("link "+node1.getId()+" to "+ node.getId());
 					}
 				}

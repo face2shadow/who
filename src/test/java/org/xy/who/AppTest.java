@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.xy.model.ThinkingResult;
 import org.xy.model.ThinkingResultItem;
 import org.xy.thinking.ThinkingBrain;
@@ -62,13 +64,20 @@ public class AppTest
 		//}
 	//	return layer;
    // }
-    
+    private static ThinkingBrain _instance = null;
+    private ThinkingBrain getBrain() {
+    	if (_instance == null) {
+		ConfigurableApplicationContext ctx = SpringApplication.run(ThinkingBrain.class,new String[] {});
+		_instance = ctx.getBean(ThinkingBrain.class);
+	}
+	return _instance;
+    }
 	/*
 	 * 获取推荐的问题列表
 	 */
 	public void testGetRecommendQuestions() {
 		//初始化环境
-		ThinkingBrain layer = ThinkingBrain.getInstance();
+		ThinkingBrain layer = getBrain() ;
 		//初始化内存管理对象
 		MemoryWrapper dsm = new MemoryWrapper();
 		//像内存中放入已经提过的问题
@@ -91,7 +100,7 @@ public class AppTest
 	 */
 	public void testGetResponse() {
 		//初始化环境
-		ThinkingBrain layer = ThinkingBrain.getInstance();
+		ThinkingBrain layer = getBrain() ;
 		//初始化内存管理对象
 		MemoryWrapper dsm = new MemoryWrapper();
 		
@@ -145,7 +154,7 @@ public class AppTest
 	}
 	public void testComparision() {
 		//初始化环境
-		ThinkingBrain layer = ThinkingBrain.getInstance();
+		ThinkingBrain layer = getBrain() ;
 		//初始化内存管理对象
 		MemoryWrapper dsm = new MemoryWrapper();
 		
@@ -187,7 +196,7 @@ public class AppTest
 		}		
 	}
 	public void testReasoning() {
-		ThinkingBrain layer = ThinkingBrain.getInstance();
+		ThinkingBrain layer = getBrain() ;
 		ThinkingDiagnosis diagnosis = new ThinkingDiagnosis();
 		ThinkingResult result = new ThinkingResult();
 		MemoryWrapper dsm = new MemoryWrapper();

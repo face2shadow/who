@@ -4,16 +4,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.xy.thinking.db.dao.AnswerDao;
-import org.xy.thinking.db.dao.CaseDao;
-import org.xy.thinking.db.dao.CaseSectionDao;
 import org.xy.thinking.db.dao.KDictDao;
 import org.xy.thinking.db.dao.KLinkDao;
 import org.xy.thinking.db.dao.KNodeDao;
-import org.xy.thinking.db.dao.KeypointDao;
-import org.xy.thinking.db.model.Answer;
-import org.xy.thinking.db.model.Case;
-import org.xy.thinking.db.model.CaseSection;
 import org.xy.thinking.db.model.KDict;
 import org.xy.thinking.db.model.KLink;
 import org.xy.thinking.db.model.KNode;

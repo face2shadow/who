@@ -12,7 +12,7 @@ public class SceneStrategy  implements TeleGate {
 	private List<ThinkingLayerBase> scenes = new LinkedList<ThinkingLayerBase>();
 	private static int MAX_CONTEXT_SIZE = 10;
 	public SceneStrategy() {
-		push(ThinkingBrain.getInstance());
+		push(new ThinkingBrain());
 	}
 	public void push(ThinkingLayerBase ctx) {
 		if (scenes.contains(ctx)) {

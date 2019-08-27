@@ -31,9 +31,8 @@ import org.xy.thinking.def.KBLoader;
 import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.mem.MemoryWrapper.DSMData;
 import org.xy.thinking.rule.ThinkingRule;
-import org.xy.thinking.service.CaseDatabaseService;
 @Service
-@ComponentScan("org.xy.thinking")
+
 public class ThinkingBrain extends ThinkingLayerBase {
 	private static final Logger log = LoggerFactory.getLogger(ThinkingBrain.class);
 	public static final String DSM_TOPIC_CODE = "TOPIC_CODE";
@@ -59,24 +58,22 @@ public class ThinkingBrain extends ThinkingLayerBase {
 	public static final int DKD_NOT_FOUND = -2;
 	public static final int FORBIDDEN_ENTER = -3;
 	
-    private static ThinkingBrain _instance = null;
-	@Autowired
-	CaseDatabaseService service;
+   // private static ThinkingBrain _instance = null;
 	
-    private ThinkingBrain() {
+    public ThinkingBrain() {
     	
     }
     /**
      * singleton 
      * @return
      */
-    public static ThinkingBrain getInstance() {
-    	if (_instance == null) {
-    		ConfigurableApplicationContext ctx = SpringApplication.run(ThinkingBrain.class,new String[] {});
-    		_instance = ctx.getBean(ThinkingBrain.class);
-    	}
-    	return _instance;
-    }
+//    public static ThinkingBrain getInstance() {
+//    	if (_instance == null) {
+//    		ConfigurableApplicationContext ctx = SpringApplication.run(ThinkingBrain.class,new String[] {});
+//    		_instance = ctx.getBean(ThinkingBrain.class);
+//    	}
+//    	return _instance;
+//    }
     public static void debug(String message) {
         log.debug(message);
     }
@@ -308,16 +305,16 @@ public class ThinkingBrain extends ThinkingLayerBase {
 		return SUCCESS;
     }
     private void loadKnowledgeFile(String code) {
-    	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE,code) ) {
-    		if (service != null) {
-    			String content = service.readCase(code);
-    			log.info("load knowledge from database for code: " + code);
-    			log.debug(content);
-    			KBLoader.loadDKDFromString(content,  System.currentTimeMillis());
-    		} else {
-    			log.error("datbase service not existed.");
-    		}
-    	}
+//    	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE,code) ) {
+//    		if (service != null) {
+//    			String content = service.readCase(code);
+//    			log.info("load knowledge from database for code: " + code);
+//    			log.debug(content);
+//    			KBLoader.loadDKDFromString(content,  System.currentTimeMillis());
+//    		} else {
+//    			log.error("datbase service not existed.");
+//    		}
+//    	}
     }
     /*
      * get recommended questions list
