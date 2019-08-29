@@ -171,7 +171,7 @@ public class AppTest
 			for (String s: user_says) {
 
 				//这里是调用了系统，获得回复
-				layer.compareKnowledge(sceneCode, s, result);
+				//layer.compareKnowledge(sceneCode,“”, s, result);
 				//这里是打印回复的内容，一般只会回复一条结果
 				for (ThinkingResultItem item: result) {
 					String[] parts = item.getValue().split("\\,");//其中item.getValue()是文字提示 

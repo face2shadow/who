@@ -3,6 +3,7 @@ package org.xy.thinking;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
@@ -25,12 +26,17 @@ import org.xy.model.KBLine;
 import org.xy.model.KBLineField;
 import org.xy.model.KBSection;
 import org.xy.model.KBSectionDefinition;
+import org.xy.thinking.bean.Evaluation;
+import org.xy.thinking.bean.EvaluationNode;
+import org.xy.thinking.bean.EvaluationResult;
 import org.xy.thinking.def.KBDefinitionMap;
 import org.xy.thinking.def.KBFile;
 import org.xy.thinking.def.KBLoader;
 import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.mem.MemoryWrapper.DSMData;
 import org.xy.thinking.rule.ThinkingRule;
+import org.xy.thinking.service.impl.EvaluationService;
+import org.xy.utils.SplitWord;
 @Service
 
 public class ThinkingBrain extends ThinkingLayerBase {
@@ -304,23 +310,12 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	}
 		return SUCCESS;
     }
-    private void loadKnowledgeFile(String code) {
-//    	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE,code) ) {
-//    		if (service != null) {
-//    			String content = service.readCase(code);
-//    			log.info("load knowledge from database for code: " + code);
-//    			log.debug(content);
-//    			KBLoader.loadDKDFromString(content,  System.currentTimeMillis());
-//    		} else {
-//    			log.error("datbase service not existed.");
-//    		}
-//    	}
-    }
+
     /*
      * get recommended questions list
      */
     public int getRecommendQuestions(String code, MemoryWrapper dsmInput, ThinkingResult result, int maxQuestionCount) throws Exception {
-    	loadKnowledgeFile(code);
+    
     	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE,code) ) {
     		log.debug("Knowledge was not found");
     		return DKD_NOT_FOUND;
@@ -376,7 +371,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	return SUCCESS;
     }
     public int getResponse(String code, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {
-    	loadKnowledgeFile(code);
+    	
     	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE, code) ) {
     		log.debug("Knowledge was not found");
     		return DKD_NOT_FOUND;
@@ -415,44 +410,51 @@ public class ThinkingBrain extends ThinkingLayerBase {
         
     	return SUCCESS;
     }
-    public int compareKnowledge(String code, String userContent, ThinkingResult result) throws Exception {
-    	loadKnowledgeFile(code);
-    	if (! KBLoader.getDefinitions().containsKey(DKD_TYPE, code) ) {
+	
+	public String getKeyWord(String text) {
+		return "";
+	}
+
+    public int compareKnowledge(String caseCode, String sectionCode, String userContent, ThinkingResult result) throws Exception {
+    	String code = String.format("%s.%s",caseCode, sectionCode);
+    	if (! KBLoader.getDefinitions().containsKey("CONCLUSION", code) ) {
     		log.debug("Knowledge was not found");
     		return DKD_NOT_FOUND;
     	}
-    	KBSection file = KBLoader.getDefinitions().get(DKD_TYPE, code);
+    	KBSection file = KBLoader.getDefinitions().get("CONCLUSION", code);
     	if (file == null) {
     		log.debug("DKD file cache was not found");
     		return DKD_NOT_FOUND;
     	}
     	result.clear();
-    	MemoryWrapper dsmInput = new MemoryWrapper();
-    	String[] sentences = userContent.split("\n");
-    	for (String words: sentences) {
+    	
+		EvaluationService es= new EvaluationService();
+		String text= userContent;
+		Evaluation ev=new Evaluation(code);
+		List<KBLine> lines = file.getLines("MATCH");
+		for (KBLine l: lines) {
+			int number = 0;
+			try {
+				number = Integer.parseInt(l.get(4).toString());
+			} catch (NumberFormatException exp) {
+				
+			}
+			ev.addNode(new EvaluationNode(l.get(1).toString(),l.get(2).toString(),number,l.get(3).toString()));
+			
+		};
 
-        	ThinkingResult tmpResult = new ThinkingResult();
-    		//dsmInput.deleteData("USER_SAY_TMP");
-    		//dsmInput.deleteData("USER_CONTEXT");
-    		dsmInput.putData("USER_SAY",  "", words , "+");
-    		dsmInput.clearTemp();
-    		performMatch(code, file, dsmInput, tmpResult); 
-    		for (ThinkingResultItem item: tmpResult) {
-    			ThinkingResultItem cached = result.getItem(item.getCode(), item.getName());
-    			if (cached == null) {
-    				result.add(item);
-    			} else {
-    				if (item.getCategory()== ThinkingResult.MATCHED  ) {
-    					cached.setCategory(item.getCategory());
-    				}
-    			}
-    		}
-    	}
-        if (result.size()==0) {
-    		result.addItem(ThinkingResult.ACT, code, "##NA", "say~没有匹配的结果");
-    		dsmInput.putData("USER_CONTEXT", "WORDS", "", "+");
-    	} 
-        
+		EvaluationResult r=es.calculateScore(ev, text);
+		
+		StringBuilder s = new StringBuilder();
+		for (EvaluationNode node : r.getRightNode()) {
+			result.addItem(ThinkingResult.MATCHED, code, node.getId(), 
+			String.format("code~%s,id~%s,text~'%s',keypoints~'%s',score~%f\n", r.getType(), node.getId(), node.getOriginText(), node.getKeypoints(), node.getScore()));
+		}
+		for (EvaluationNode node : r.getWrongNode()) {
+			result.addItem(ThinkingResult.UNMATCHED, code, node.getId(), 
+			String.format("code~%s,id~%s,text~'%s',keypoints~'%s',score~%f\n", r.getType(), node.getId(), node.getOriginText(), node.getKeypoints(), node.getScore()));
+			
+		}
     	return SUCCESS;  	
     }
     private int processThinkFile(String code, MemoryWrapper dsmInput, ThinkingResult result) throws Exception {

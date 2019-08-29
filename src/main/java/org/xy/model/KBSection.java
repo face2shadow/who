@@ -36,16 +36,16 @@ public class KBSection {
 		return null;
 	}
 	public List<KBLine> getLines(String tag){
-		List<KBLine> lines = new ArrayList<KBLine>();
+		List<KBLine> returnLines = new ArrayList<KBLine>();
 		for (KBLine b : lines) {
 			if (b instanceof KBLine) {
 				KBLine l = (KBLine)b;
 				if (l.get(0).toString().compareTo(tag)==0) {
-					lines.add(l);
+					returnLines.add(l);
 				}
 			}
 		}
-		return lines;
+		return returnLines;
 	}
 
 	public void setDefinition(KBSectionDefinition header) {

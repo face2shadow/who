@@ -11,13 +11,17 @@ import org.wltea.analyzer.core.Lexeme;
 import org.xy.utils.SplitWord;
 
 public class EvaluationNode {
+	private String id;
+	private String keypoints;
 	private String text;
+	private String originText;
 	private double score;
 	private Set<String> intersection=new LinkedHashSet<String>();//存放交集词语
 
 	private Set<String> sets=new LinkedHashSet<String>();//相似度计算特征
-	public EvaluationNode(String text,double score) {
+	public EvaluationNode(String id, String text,double score, String keypoints) {
 		List<Lexeme> segs=SplitWord.ikCutWordLexeme(text);
+		originText = text;
 		StringBuffer str=new StringBuffer();
 		for(Lexeme seg:segs) {
 			str.append(seg.getLexemeText()).append(" ");
@@ -25,6 +29,8 @@ public class EvaluationNode {
 		}
 		this.text=str.substring(0,(str.length()-1)<0?0:(str.length()-1)); 
 		this.score=score;
+		this.id = id;
+		this.keypoints = keypoints;
 	}
 	public String getText() {
 		return text;
@@ -67,5 +73,23 @@ public class EvaluationNode {
 	@Override
 	public String toString() {
 		return "EvaluationNode [text=" + text + ", score=" + score + "]";
+	}
+	public String getKeypoints() {
+		return keypoints;
+	}
+	public void setKeypoints(String keypoints) {
+		this.keypoints = keypoints;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getOriginText() {
+		return originText;
+	}
+	public void setOriginText(String originText) {
+		this.originText = originText;
 	}
 }

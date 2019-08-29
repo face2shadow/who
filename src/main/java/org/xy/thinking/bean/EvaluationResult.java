@@ -34,8 +34,14 @@ public class EvaluationResult {
 	private double finalScore=0.0;
 	@Override
 	public String toString() {
-		return "EvaluationResult [type=" + type + ", userText=" + userText + ", rightNode="
-				+ rightNode + ", wrongNode=" + wrongNode + ", finalScore=" + finalScore + "]";
+		StringBuilder s = new StringBuilder();
+		for (EvaluationNode node : rightNode) {
+			s.append(String.format("code~%s,id~%s,text~'%s',keypoints~'%s',score~%f\n", type, node.getId(), node.getOriginText(), node.getKeypoints(), node.getScore()));
+		}
+		for (EvaluationNode node : wrongNode) {
+			s.append(String.format("code~%s,id~%s,text~'%s',keypoints~'%s',score~%f\n", type, node.getId(), node.getOriginText(), node.getKeypoints(), node.getScore()));
+		}
+		return s.toString();
 	}
 	public double getFinalScore() {
 		return finalScore;
@@ -43,7 +49,7 @@ public class EvaluationResult {
 	public void addFinalScore(double finalScore) {
 		this.finalScore += finalScore;
 	}
-	public EvaluationResult(String text) {
+	public EvaluationResult( String text) {
 		List<Lexeme> segs=SplitWord.ikCutWordLexeme(text);
 		StringBuffer str=new StringBuffer();
 		for(Lexeme seg:segs) {
@@ -72,5 +78,16 @@ public class EvaluationResult {
 	public void addWrongNode(EvaluationNode list) {
 		this.wrongNode.add(list); 
 	}
-
+	public List<EvaluationNode> getRightNode() {
+		return rightNode;
+	}
+	public void setRightNode(List<EvaluationNode> rightNode) {
+		this.rightNode = rightNode;
+	}
+	public List<EvaluationNode> getWrongNode() {
+		return wrongNode;
+	}
+	public void setWrongNode(List<EvaluationNode> wrongNode) {
+		this.wrongNode = wrongNode;
+	}
 }

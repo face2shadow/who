@@ -35,12 +35,12 @@ public class EvaluationService {
 		// TODO Auto-generated method stub
 		EvaluationService es= new EvaluationService();
 		String text="1、胸腔积液 2、气胸";
-		List<String> l=SplitWord.ikCutWord("临床诊断：（5分）\r\n" + 
-				"右侧胸腔积液（2.5分）：结核性胸膜炎考虑（2.5分）");
-		System.out.println(l);
+		//List<String> l=SplitWord.ikCutWord("临床诊断：（5分）\r\n" + 
+		//		"右侧胸腔积液（2.5分）：结核性胸膜炎考虑（2.5分）");
+		//System.out.println(l);
 		Evaluation ev=new Evaluation("临床诊断");
-		ev.addNode(new EvaluationNode("右侧胸腔积液",2.5));
-		ev.addNode(new EvaluationNode("结核性胸膜炎考虑",2.5));
+		//ev.addNode(new EvaluationNode("右侧胸腔积液",2.5));
+		//ev.addNode(new EvaluationNode("结核性胸膜炎考虑",2.5));
 		EvaluationResult r=es.calculateScore(ev, text);
 		System.out.println(r); 
 		
