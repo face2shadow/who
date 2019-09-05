@@ -2,6 +2,7 @@ package org.xy.thinking.rule;
 
 import org.xy.model.KBRuleUnknownData;
 import org.xy.model.ResultEnum;
+import org.xy.thinking.mem.DSMData;
 import org.xy.thinking.mem.MemoryWrapper;
 
 public class ThinkingFact extends ThinkingUnit {
@@ -26,7 +27,7 @@ public class ThinkingFact extends ThinkingUnit {
 			reverse = true;
 			key = key.substring(1, key.length());
 		}
-		MemoryWrapper.DSMData data = mem.getData(prefix + key) == null ? mem.getData(key) : mem.getData(prefix + key);
+		DSMData data = mem.getData(prefix + key) == null ? mem.getData(key) : mem.getData(prefix + key);
 		if (data == null){
 			return ResultEnum.SystemDontKnow;
 		}

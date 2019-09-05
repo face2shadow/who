@@ -10,7 +10,7 @@ import org.xy.model.KBLineField;
 import org.xy.model.KBSection;
 import org.xy.model.KBSectionDefinition;
 import org.xy.thinking.mem.MemoryWrapper;
-import org.xy.thinking.mem.MemoryWrapper.DSMData;
+import org.xy.thinking.mem.DSMData;
 
 public class SectionDisease {
 	private KBSection section = null;
@@ -59,7 +59,7 @@ public class SectionDisease {
 
 		for (KBLine l : sex) {
 			String sexCode = l.get(1).toString();
-			MemoryWrapper.DSMData data = dsm.getData(sexCode);
+			DSMData data = dsm.getData(sexCode);
 			if (data != null) {
 				ret = ret || ResultEnum.isPositive(data.getFlag());
 			}

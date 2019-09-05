@@ -11,6 +11,7 @@ import org.xy.model.KBLine;
 import org.xy.model.KBLineField;
 import org.xy.model.KBRuleUnknownData;
 import org.xy.model.KBSection;
+import org.xy.thinking.mem.DSMData;
 import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.rule.ThinkingRule;
 
@@ -60,7 +61,7 @@ public abstract class SectionUtils {
 					expr = l.get(2).get(0).get(1).toString();
 				}
 			}
-			MemoryWrapper.DSMData data = mem.getData(target);
+			DSMData data = mem.getData(target);
 			if (data == null) { //support both key and text name
 				data = mem.getData(key);
 				if (expr != null) {

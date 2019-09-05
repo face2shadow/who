@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import org.xy.model.KBRuleUnknownData;
 import org.xy.model.ResultEnum;
 import org.xy.thinking.mem.MemoryWrapper;
-import org.xy.thinking.mem.MemoryWrapper.DSMData;
+import org.xy.thinking.mem.DSMData;
 
 public class ThinkingRule extends ThinkingUnit {
 	private ThinkingUnit root = null;

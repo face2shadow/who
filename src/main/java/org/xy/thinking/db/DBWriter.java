@@ -21,8 +21,8 @@ import org.xy.thinking.service.ThinkingDatabaseService;
 @SpringBootApplication
 @ComponentScan("org.xy.thinking")
 public class DBWriter {
-	//@Autowired
-	//ThinkingDatabaseService service;
+	@Autowired
+	ThinkingDatabaseService service;
 	public void saveToDB() {
 		KBDefinitionMap map = KBLoader.getDefinitions();
 		

@@ -33,7 +33,7 @@ import org.xy.thinking.def.KBDefinitionMap;
 import org.xy.thinking.def.KBFile;
 import org.xy.thinking.def.KBLoader;
 import org.xy.thinking.mem.MemoryWrapper;
-import org.xy.thinking.mem.MemoryWrapper.DSMData;
+import org.xy.thinking.mem.DSMData;
 import org.xy.thinking.rule.ThinkingRule;
 import org.xy.thinking.service.impl.EvaluationService;
 import org.xy.utils.SplitWord;

@@ -1,5 +1,6 @@
 package org.xy.model;
 
+import org.xy.thinking.mem.DSMData;
 import org.xy.thinking.mem.MemoryWrapper;
 
 public class KBFunction {
@@ -24,7 +25,7 @@ public class KBFunction {
 				key = key.substring(1, key.length());
 			}
 
-			MemoryWrapper.DSMData data = mem.getData("_"+key) == null ? mem.getData(key) : mem.getData("_"+key);
+			DSMData data = mem.getData("_"+key) == null ? mem.getData(key) : mem.getData("_"+key);
 			if (data == null) return w;
 			
 			if (ResultEnum.isSystemDontKnow(data.getResult())) return w;
@@ -36,7 +37,7 @@ public class KBFunction {
 		String para1 = parameters;
 		if (para1.startsWith("'") || para1.startsWith("\""))
 			para1 = para1.substring(1, para1.length()-1);
-		MemoryWrapper.DSMData data = mem.getData(para1);
+		DSMData data = mem.getData(para1);
 		if (data == null || ResultEnum.isSystemDontKnow(data.getResult())) return para1;
 		return null;
 	}
@@ -71,7 +72,7 @@ public class KBFunction {
 				key = key.substring(1, key.length());
 			}
 
-			MemoryWrapper.DSMData data = mem.getData("_"+key) == null ? mem.getData(key) : mem.getData("_"+key);
+			DSMData data = mem.getData("_"+key) == null ? mem.getData(key) : mem.getData("_"+key);
 
 			if (data != null) {
 				if (ResultEnum.isPositive(data.getResult()) || ResultEnum.isNegative(data.getResult()) || ResultEnum.isUserDontKnow(data.getResult())) {
