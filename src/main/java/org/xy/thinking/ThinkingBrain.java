@@ -128,9 +128,6 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	return actions;
     }
     private List<String> getNextQuestion(KBSection section, String qcode){
-    	
-
-    	
     	for (KBLine line:section.getLines()) {
 	    	if (line.get(0).toString().compareTo(DKD_HEADER_LINK)==0) {
 				Action act = line2Action(ThinkingResult.LINK, line);
@@ -333,6 +330,7 @@ public class ThinkingBrain extends ThinkingLayerBase {
     	DSMData data = dsmInput.getData("LAST_QUESTION");
     	List<String> next = null;
     	if (data != null) next = getNextQuestion(file, data.getValue());
+    	
     	List<Action> goCommands = getAllGoCommands(file, dsmInput, false);
     	List<Action> filteredGoCommands = new ArrayList<Action>();
     	if (next != null) {
