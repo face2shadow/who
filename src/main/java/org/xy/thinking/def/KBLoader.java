@@ -3,20 +3,14 @@ package org.xy.thinking.def;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.xy.model.KBSection;
-import org.xy.thinking.ThinkingBrain;
-import org.xy.thinking.ThinkingDiagnosis;
 import org.xy.thinking.diagnosis.SectionUtils;
 
 public abstract class KBLoader {
-    private static final Logger log = LoggerFactory.getLogger(KBLoader.class);
-	private static KBDefinitionMap definitions =  new KBDefinitionMap();
+	private static KBDefinitionMap definitions = new KBDefinitionMap();
+
 	public static KBDefinitionMap getDefinitions() {
 		return definitions;
 	}
@@ -29,20 +23,16 @@ public abstract class KBLoader {
 			{				
 				String filename = f.getPath();				
 				loadDKDFromString(readFile(filename),0);
-				log.debug("Load DKD from "+filename);
 			}
 		}
 	}
+
 	public static String readFile(String path) {
 		StringBuilder result = new StringBuilder();
         try{
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path),"UTF-8"));
-            //BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
             String s = null;
             while((s = br.readLine())!=null){//使用readLine方法，一次读一行
-            	if (s.startsWith("\0xef\0xbb\0xbf")) {
-            		s = s.substring(3);
-            	}
                 result.append(System.lineSeparator()+s);
             }
             br.close();    
@@ -51,22 +41,23 @@ public abstract class KBLoader {
         }
         return result.toString();
 	}
+	public static void loadDKDFromString(String contents, long mDate) {
+		KBFile def = new KBFile();
+		def.parse(contents);
 
-    public static void loadDKDFromString(String contents, long mDate) {
-    	KBFile def = new KBFile();
-        def.parse(contents);
+		def.setTimeStamp(mDate);
+		def.setLastUpdate(System.currentTimeMillis());
 
-        def.setTimeStamp(mDate);
-        def.setLastUpdate(System.currentTimeMillis());
+		for (KBSection section : def.getSections()) {
+			String ftype = section.getFileType();
+			if (section.getDeclarationLine()==null) {
+				System.out.println("No Declaration Line...\n" +contents);
+			}
+			String code = SectionUtils.getFieldText(section.getDeclarationLine(), 1);
 
-        for (KBSection section: def.getSections()) {
-        	String ftype = section.getFileType();
-        	String code = SectionUtils.getFieldText(section.getDeclarationLine(), 1);
-        	
-        	definitions.put(ftype,code, section);
-        }
+			definitions.put(ftype, code, section);
+		}
 
-    }
-
-
+	}
+	
 }

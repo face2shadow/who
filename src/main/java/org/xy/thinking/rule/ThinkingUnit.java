@@ -1,14 +1,11 @@
 package org.xy.thinking.rule;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xy.model.KBRuleUnknownData;
 import org.xy.model.ResultEnum;
 import org.xy.thinking.mem.MemoryWrapper;
+
+
 
 public abstract class ThinkingUnit  {
     private static final Logger log = LoggerFactory.getLogger(ThinkingUnit.class);
@@ -105,11 +102,11 @@ public abstract class ThinkingUnit  {
 	}
 	public ThinkingUnit getEstimateSide(String s) {
 		ThinkingUnit t = null;
-		if (s.compareTo("L")==0) {
+		if ("L".equals(s)) {
 			t = getLeft();
-		} else if (s.compareTo("R")==0) {
+		} else if ("R".equals(s)) {
 			t = getRight();
-		} else if (s.compareTo("F")==0){
+		} else if ("F".equals(s)){
 			t = getLeft();
 		}
 		return t;

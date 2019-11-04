@@ -9,12 +9,15 @@ public class ThinkingFact extends ThinkingUnit {
 	public ThinkingFact() {
 		super();
 	}
+	
 	public String toString() {
-		return getValue();
+		return "["+getValue()+"="+getResult()+"]";
 	}
+	
 	public void dumps(ThinkingUnit parent, String prefix) {
 		debug (String.format("%s %s %s" ,prefix,"VALUE", getValue()));
 	}
+	
 	public ResultEnum eval(MemoryWrapper mem, String prefix) throws Exception {
 		if (getValue().compareToIgnoreCase("true") == 0) {
 			setResult(ResultEnum.Positive);
@@ -23,7 +26,7 @@ public class ThinkingFact extends ThinkingUnit {
 		String key = getValue();
 		
 		boolean reverse = false;
-		if (key.substring(0, 1).compareTo("!") == 0) {
+		if ("!".equals(key.substring(0, 1))) {
 			reverse = true;
 			key = key.substring(1, key.length());
 		}
@@ -42,6 +45,7 @@ public class ThinkingFact extends ThinkingUnit {
 		}
 		return getResult();
 	}
+	
 	@Override
 	public KBRuleUnknownData estimate(MemoryWrapper mem, String prefix, int deepth) {
 		if (ResultEnum.isSystemDontKnow(getResult()) ||  ResultEnum.isUserDontKnow(getResult())) {

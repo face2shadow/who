@@ -4,8 +4,10 @@ import java.util.HashMap;
 
 import org.xy.model.KBRuleUnknownData;
 import org.xy.model.ResultEnum;
-import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.mem.DSMData;
+import org.xy.thinking.mem.MemoryWrapper;
+
+
 
 public class ThinkingOr extends ThinkingUnit {
 
@@ -50,7 +52,7 @@ public class ThinkingOr extends ThinkingUnit {
 			throw new Exception("ASTor a is null or b is null");
 		String s = a.toString() + b.toString();		
 		s = tran_tbl.get(s);
-		if (s.compareTo("V")==0) {
+		if ("V".equals(s)) {
 			return null;
 		}
 		ThinkingUnit t = getEstimateSide(s);
@@ -96,7 +98,9 @@ public class ThinkingOr extends ThinkingUnit {
 		
 		String s = a.toString() + b.toString();
 		setResult(ResultEnum.parse(tran_tbl.get(s)));
-		mem.putTempData(getIdString(), "", "", getResult().toString());
+		if (ResultEnum.isNegative(getResult()) || ResultEnum.isPositive(getResult())){
+			mem.putTempData(getIdString(), "", "", getResult().toString());	
+		}
 		//System.out.println("put " + getIdString());
 		return getResult();
 	}

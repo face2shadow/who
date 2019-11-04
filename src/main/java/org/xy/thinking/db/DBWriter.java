@@ -131,7 +131,7 @@ public class DBWriter {
 		try {
 			dsmInput.putData("1493", "","","+");
 			//dsmInput.putData("4559", "","","+");
-			g.think(dsmInput, result,  "", "","");
+			//g.think(dsmInput, result,  "", "","");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

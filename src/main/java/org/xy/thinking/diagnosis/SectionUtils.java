@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.xy.model.ResultEnum;
 import org.xy.model.KBBaseClass;
@@ -79,13 +80,17 @@ public abstract class SectionUtils {
 		}
 	
 	}
-	public static List<String> evaluateRules(MemoryWrapper mem, List<KBLine> lines, int rulePos, String ruleTag, String returnTag) throws Exception {
-		List<String> codes = new ArrayList<String>();
+	public static Set<String> evaluateRules(MemoryWrapper mem, List<KBLine> lines, int rulePos, String ruleTag, String returnTag) throws Exception {
+		Set<String> codes = new HashSet<>();
 		for (KBLine line : lines) {
 			if (line.count() < rulePos)
 				continue;
-			String rule = line.get(rulePos).getNamed(ruleTag);
-			String e_code = line.get(2).getNamed(returnTag);
+			
+			String rule = line.get(rulePos).getNamed(ruleTag);			
+			String e_code = line.get(rulePos).getNamed(returnTag);
+			if ("id".equals(returnTag)) {
+				e_code = line.get(1).toString();
+			}
 			if (rule == null)
 				continue;
 			ThinkingRule expr = new ThinkingRule();
@@ -97,6 +102,28 @@ public abstract class SectionUtils {
 		}
 		return codes;
 	}
+	public static Set<String> evaluateRulesWithUnknown(MemoryWrapper mem, List<KBLine> lines, int rulePos, String ruleTag, String returnTag) throws Exception {
+		Set<String> codes = new HashSet<>();
+		for (KBLine line : lines) {
+			if (line.count() < rulePos)
+				continue;
+			String rule = line.get(rulePos).getNamed(ruleTag);			
+			String e_code = line.get(rulePos).getNamed(returnTag);
+			if (returnTag.compareTo("id")==0) {
+				e_code = line.get(1).toString();
+			}
+			if (rule == null)
+				continue;
+			ThinkingRule expr = new ThinkingRule();
+			expr.parse(rule);
+			ResultEnum result = evaluteSingleRule(mem, line, rulePos, ruleTag);
+			if (ResultEnum.isPositive(result) || ResultEnum.isSystemDontKnow(result) ) {
+				codes.add(e_code);
+			}
+		}
+		return codes;
+	}
+
 	public static ResultEnum evaluteSingleRule(MemoryWrapper mem, KBLine line, int rulePos, String ruleTag) throws Exception {
 		
 		if (line.count() < rulePos)
@@ -145,4 +172,31 @@ public abstract class SectionUtils {
 			}
 		}
 	}
+
+	public static List<String> retrieveParameters(String content){
+		String propValue="";
+		List<String> values = new ArrayList<String>();
+		int skipCount = 0;
+		if (content != null) {
+			content += ":";
+			for (int i=0;i<content.length();i++) {
+				char c = content.charAt(i);
+				if (skipCount == 0 && c == ':') {
+					if (propValue.startsWith("'") && propValue.endsWith("'")) {
+						propValue = propValue.substring(1, propValue.length()-1);
+					}
+					values.add(propValue);
+					propValue = "";
+					continue;
+				}
+				if (skipCount == 0 && c == '\\') {
+					skipCount = 2;
+				}
+				propValue += c;				
+				if (skipCount > 0) skipCount --;
+			}			
+		}
+		return values;
+	}
+
 }

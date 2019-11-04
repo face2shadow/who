@@ -1,21 +1,18 @@
 package org.xy.thinking.rule;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.xy.model.KBRuleUnknownData;
 import org.xy.model.ResultEnum;
-import org.xy.thinking.mem.MemoryWrapper;
 import org.xy.thinking.mem.DSMData;
+import org.xy.thinking.mem.MemoryWrapper;
+
 
 public class ThinkingRule extends ThinkingUnit {
 	private ThinkingUnit root = null;
-	private ThinkingUnit currentNode = null;
 	@Override 
 	public int getHeightValue() {
 		return 1;
@@ -57,15 +54,24 @@ public class ThinkingRule extends ThinkingUnit {
 
 		ThinkingUnit root = getRoot();
 		if (root != null) {
+			String id = root.getIdString();
+			if ("true".equals(id)) {
+				setResult(ResultEnum.Positive);
+				return getResult();
+			} else if ("false".equals(id)) {
+				setResult(ResultEnum.Negative);
+				return getResult();
+			}
 			DSMData data = mem.getData(root.getIdString());
 			if (data != null) {
-				//System.out.println("Hit "+getIdString()+":"+data.getFlag());
 				setResult(ResultEnum.parse(data.getFlag()));
 				this.setKnownFacts(root.getKnownFacts());
 			} else {
 				setResult(root.eval(mem, prefix));
 				this.setKnownFacts(0);
-				mem.putTempData(root.getIdString(), "", "", getResult().toString());
+				if (ResultEnum.isNegative(getResult()) || ResultEnum.isPositive(getResult())){
+					mem.putTempData(root.getIdString(), "", "", getResult().toString());
+				}
 			}
 		} 
 		return getResult();
@@ -104,7 +110,7 @@ public class ThinkingRule extends ThinkingUnit {
 		node.setLeft(root.getRight());
 		root.setRight(node);
 	
-		System.out.println("Dif:"+root.getHeightDifference());
+		//System.out.println("Dif:"+root.getHeightDifference());
 		if (root.getHeightDifference()<0) {
 			ThinkingUnit tmp = root.getRight();
 			root.setRight(tmp.getLeft());
@@ -145,20 +151,20 @@ public class ThinkingRule extends ThinkingUnit {
 		System.out.println("Cant reach here");
 		return null;
 	}
-	public void parse(String rule) {
+	public void parse(String rule) throws Exception {
 		//rule = rule + " and true";
 		HashSet<String> reserved_words = new HashSet<String>();
 		ThinkMethod mobj = new ThinkMethod();
 		for (Method m : mobj.getClass().getMethods()) {
 			if (m.isAnnotationPresent(ThinkFunc.class)) {
 				ThinkFunc tf = m.getAnnotation(ThinkFunc.class);
-				if (tf.domain().compareTo("evaluate") ==0 ) {
+				//if ("evaluate".equals(tf.domain())) {
 					reserved_words.add(tf.name());
 					reserved_words.add("!"+tf.name());
-				}
+				//}
 			}
 		}
-		String regEx = "(and)|(or)|(\\!?[a-z0-9A-Z\\_]+)|(\\s+)|(\\()|(\\))";
+		String regEx = "(and)|(or)|(\\!?[a-z0-9A-Z\\_,']+)|(\\s+)|(\\!?\\()|(\\))";
 		int start = 0;
 		Pattern pattern = Pattern.compile(regEx);
 		Matcher matcher = pattern.matcher(rule);
@@ -167,8 +173,12 @@ public class ThinkingRule extends ThinkingUnit {
 		while (start < rule.length()) {
 			matcher.region(start, rule.length());
 			if (matcher.lookingAt() == false) {
-				start = matcher.end();
+				try {
+				start = matcher.end();				
 				continue;
+				} catch (IllegalStateException exp) {
+					throw new Exception("Invalid rule "+rule);
+				}
 			}
 			if (matcher.start() < 0) continue;
 			start = matcher.end();

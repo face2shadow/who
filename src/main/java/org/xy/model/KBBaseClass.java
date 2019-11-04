@@ -51,6 +51,13 @@ public class KBBaseClass {
 	public void setFields(List<KBBaseClass> fields) {
 		this.fields = fields;
 	}
+
+	public String getStringValue(int i) {
+		if (fields.size() > i) {
+			return fields.get(i).getContent();
+		}
+		return null;
+	}
 	public KBBaseClass get(int i) {
 		if (fields.size() > i) {
 			return fields.get(i);
