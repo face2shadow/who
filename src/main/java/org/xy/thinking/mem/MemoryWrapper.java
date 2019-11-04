@@ -13,13 +13,18 @@ import org.xy.thinking.def.KBLoader;
 import org.xy.thinking.diagnosis.DiagnosisConstants;
 import org.xy.thinking.diagnosis.SectionDisease;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MemoryWrapper {
-    private static final Logger log = LoggerFactory.getLogger(MemoryWrapper.class);
+public class MemoryWrapper implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final Logger log = LoggerFactory.getLogger(MemoryWrapper.class);
 	private HashMap<String, DSMData> tmp = new HashMap<String, DSMData>();
 	private HashMap<String, DSMData> data = new HashMap<String, DSMData>();	
 	private Map<String, String> differentials;

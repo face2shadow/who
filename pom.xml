@@ -5,7 +5,7 @@
 
 	<groupId>org.xy</groupId>
 	<artifactId>who</artifactId>
-	<version>0.0.5-SNAPSHOT</version>
+	<version>0.0.6-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>who</name>
